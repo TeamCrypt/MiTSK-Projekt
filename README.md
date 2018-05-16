@@ -1,4 +1,4 @@
-# Projekt z przedmiotu _Metody i Techniki Symulacji Komputerowej"
+# Projekt z przedmiotu _"Metody i Techniki Symulacji Komputerowej"_
 
 ## Git Flow
 
