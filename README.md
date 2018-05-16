@@ -21,3 +21,12 @@
         * `ambassadors/` - zawiera klasy ambasadorów federatów.
     * `interactions/` - zawiera pomocnicze klasy interakcji.
     * `objects/` - zawiera pomocnicze klasy obiektów.
+
+## Uwagi
+_Commity_ powinny być opatrzone etykietą `GH-[numer utworzonego issue]`. Odwołania do użytkownika robimy za pomocą `@[NAZWA UŻYTKOWNIKA]`.
+
+Przykładowy _commit_:
+
+> GH-1 Poprawki do klasy X według uwag @Y
+
+Więcej w pomocy GitHuba: [Autolinked references and URLs](https://help.github.com/articles/autolinked-references-and-urls/), [Mentioning people and teams](https://help.github.com/articles/basic-writing-and-formatting-syntax/#mentioning-people-and-teams).
