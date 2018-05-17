@@ -11,6 +11,7 @@
     * Przed utworzeniem nowego _brancha_ należy pobrać zmiany dla _brancha_ `master`.
 3. Zmiany publikujemy wyłącznie na _branchu_ dotyczącym danego _issue_.
 4. Po skończonej pracy w _issue_ piszemy podsumowanie i robimy _merge_ do _brancha_ `master`.
+    * _Merge_ robimy z opcją `--no-ff`.
 5. Zamykamy _issue_.
 
 ## Organizacja katalogów
