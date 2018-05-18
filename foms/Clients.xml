@@ -13,23 +13,23 @@
 			<name>HLAobjectRoot</name>
 			<objectClass>
 				<name>Client</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 			<objectClass>
 				<name>Queue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 			<objectClass>
 				<name>Waiter</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 			<objectClass>
 				<name>Table</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 			<objectClass>
 				<name>Meal</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 		</objectClass>
 	</objects>
@@ -38,79 +38,79 @@
 			<name>HLAinteractionRoot</name>
 			<interactionClass>
 				<name>NewClient</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientTookTable</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientCallsWaiter</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientOrdersMeal</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientAsksForBill</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>EndingClientService</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientLeftTable</name>
-				<sharing>Publish</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>NewInQueue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>LeaveFromQueue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 				<interactionClass>
 					<name>ClientImpatience</name>
-					<sharing>Subscribe</sharing>
+					<sharing>PublishSubscribe</sharing>
 					<transportation>HLAreliable</transportation>
 					<order>TimeStamp</order>
 				</interactionClass>
 			</interactionClass>
 			<interactionClass>
 				<name>NewInRestaurant</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>StartingClientService</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>PaymentService</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>

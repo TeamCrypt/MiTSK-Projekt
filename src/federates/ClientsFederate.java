@@ -143,7 +143,7 @@ public class ClientsFederate {
         };
 
         rtiamb.joinFederationExecution(federateName,            // name for the federate
-                "ExampleFederateType",   // federate type
+                "ClientsFederateType",   // federate type
                 "ExampleFederation",     // name of federation
                 joinModules);           // modules we want to add
 
@@ -362,15 +362,15 @@ public class ClientsFederate {
     //                     STATIC METHODS
     //----------------------------------------------------------
     public static void main(String[] args) {
-        // get a federate name, use "exampleFederate" as default
-        String federateName = "exampleFederate";
+        // get a federate name, use "clientsFederate" as default
+        String federateName = "clientsFederate";
         if (args.length != 0) {
             federateName = args[0];
         }
 
         try {
             // run the example federate
-            new ExampleFederate().runFederate(federateName);
+            new ClientsFederate().runFederate(federateName);
         } catch (Exception rtie) {
             // an exception occurred, just log the information and exit
             rtie.printStackTrace();
