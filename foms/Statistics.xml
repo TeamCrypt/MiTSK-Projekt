@@ -13,7 +13,7 @@
 			<name>HLAobjectRoot</name>
 			<objectClass>
 				<name>Queue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 			</objectClass>
 		</objectClass>
 	</objects>
@@ -22,18 +22,18 @@
 			<name>HLAinteractionRoot</name>
 			<interactionClass>
 				<name>NewInQueue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
 			<interactionClass>
 				<name>LeaveFromQueue</name>
-				<sharing>Subscribe</sharing>
+				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 				<interactionClass>
 					<name>ClientImpatience</name>
-					<sharing>Subscribe</sharing>
+					<sharing>PublishSubscribe</sharing>
 					<transportation>HLAreliable</transportation>
 					<order>TimeStamp</order>
 				</interactionClass>

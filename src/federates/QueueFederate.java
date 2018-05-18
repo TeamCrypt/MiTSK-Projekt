@@ -114,7 +114,8 @@ public class QueueFederate {
         // FOM module
         try {
             URL[] modules = new URL[]{
-                    (new File("foms/Queue.xml")).toURI().toURL()
+                    (new File("foms/Queue.xml")).toURI().toURL(),
+                    (new File("foms/Statistics.xml")).toURI().toURL()
             };
 
             rtiamb.createFederationExecution("ExampleFederation", modules);
@@ -135,7 +136,7 @@ public class QueueFederate {
         };
 
         rtiamb.joinFederationExecution(federateName,            // name for the federate
-                "ExampleFederateType",   // federate type
+                "QueueFederateType",   // federate type
                 "ExampleFederation",     // name of federation
                 joinModules);           // modules we want to add
 
@@ -352,15 +353,15 @@ public class QueueFederate {
     //                     STATIC METHODS
     //----------------------------------------------------------
     public static void main(String[] args) {
-        // get a federate name, use "exampleFederate" as default
-        String federateName = "exampleFederate";
+        // get a federate name, use "queueFederate" as default
+        String federateName = "queueFederate";
         if (args.length != 0) {
             federateName = args[0];
         }
 
         try {
             // run the example federate
-            new ExampleFederate().runFederate(federateName);
+            new QueueFederate().runFederate(federateName);
         } catch (Exception rtie) {
             // an exception occurred, just log the information and exit
             rtie.printStackTrace();
