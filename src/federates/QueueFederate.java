@@ -53,6 +53,7 @@ public class QueueFederate {
     protected InteractionClassHandle newClientHandle;
     protected InteractionClassHandle tableBecomesFreeHandle;
     protected InteractionClassHandle freeTableShoutsHandle;
+    private boolean queue = false;
 
     //----------------------------------------------------------
     //                      CONSTRUCTORS
@@ -114,6 +115,7 @@ public class QueueFederate {
         // FOM module
         try {
             URL[] modules = new URL[]{
+                    (new File("foms/Clients.xml")).toURI().toURL(),
                     (new File("foms/Queue.xml")).toURI().toURL(),
                     (new File("foms/Statistics.xml")).toURI().toURL()
             };
@@ -322,8 +324,11 @@ public class QueueFederate {
      * they tick(). This particular interaction has no parameters, so you pass an empty
      * map, but the process of encoding them is the same as for attributes.
      */
-    private void sendInteraction() throws RTIexception {
-        addClient();
+    private void sendInteraction() throws RTIexception { // @TODO
+        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(0);
+        rtiamb.sendInteraction(newInQueueHandle, parameters, generateTag());
+
+        queue = false;
     }
 
     /**
@@ -381,7 +386,6 @@ public class QueueFederate {
 
 
     public void addClient() throws RTIexception { // @TODO get client id
-        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(0);
-        rtiamb.sendInteraction(newInQueueHandle, parameters, generateTag());
+        queue = true;
     }
 }

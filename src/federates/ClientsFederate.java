@@ -1,12 +1,7 @@
 package federates;
 
 import federates.ambassadors.ClientsFederateAmbassador;
-import hla.rti1516e.CallbackModel;
-import hla.rti1516e.InteractionClassHandle;
-import hla.rti1516e.ObjectClassHandle;
-import hla.rti1516e.RTIambassador;
-import hla.rti1516e.ResignAction;
-import hla.rti1516e.RtiFactoryFactory;
+import hla.rti1516e.*;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
 import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
@@ -122,7 +117,9 @@ public class ClientsFederate {
         // FOM module
         try {
             URL[] modules = new URL[]{
-                    (new File("foms/Clients.xml")).toURI().toURL()
+                    (new File("foms/Clients.xml")).toURI().toURL(),
+                    (new File("foms/Queue.xml")).toURI().toURL(),
+                    (new File("foms/Statistics.xml")).toURI().toURL()
             };
 
             rtiamb.createFederationExecution("ExampleFederation", modules);
@@ -214,7 +211,7 @@ public class ClientsFederate {
             // updateAttributeValues(objectHandle);
 
             // 9.2 send an interaction
-            // sendInteraction();
+            sendInteraction();
 
             // 9.3 request a time advance and wait until we get it
             advanceTime(1.0);
@@ -341,6 +338,21 @@ public class ClientsFederate {
     }
 
     /**
+     * This method will send out an interaction of the type FoodServed.DrinkServed. Any
+     * federates which are subscribed to it will receive a notification the next time
+     * they tick(). This particular interaction has no parameters, so you pass an empty
+     * map, but the process of encoding them is the same as for attributes.
+     */
+    private void sendInteraction() throws RTIexception {
+        createClient();
+    }
+
+    private void createClient() throws RTIexception {
+        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(1); //TODO: dla @Konrad
+        rtiamb.sendInteraction(newClientHandle, parameters, generateTag());
+    }
+
+    /**
      * This method will request a time advance to the current time, plus the given
      * timestep. It will then wait until a notification of the time advance grant
      * has been received.
@@ -356,6 +368,10 @@ public class ClientsFederate {
         while (fedamb.getIsAdvancing()) {
             rtiamb.evokeMultipleCallbacks(0.1, 0.2);
         }
+    }
+
+    private byte[] generateTag() {
+        return ("(timestamp) " + System.currentTimeMillis()).getBytes();
     }
 
     //----------------------------------------------------------
@@ -378,7 +394,7 @@ public class ClientsFederate {
     }
 
     public InteractionClassHandle getNewInQueueHandle() {
-        return newClientHandle;
+        return newInQueueHandle;
     }
 
     public InteractionClassHandle getLeaveFromQueueHandle() {

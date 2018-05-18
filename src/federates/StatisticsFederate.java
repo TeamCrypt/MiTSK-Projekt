@@ -166,6 +166,7 @@ public class StatisticsFederate {
         // restaurant FOM modules covering processes, food and drink
         try {
             URL[] modules = new URL[]{
+                    (new File("foms/Clients.xml")).toURI().toURL(),
                     (new File("foms/Queue.xml")).toURI().toURL(),
                     (new File("foms/Statistics.xml")).toURI().toURL()
             };
