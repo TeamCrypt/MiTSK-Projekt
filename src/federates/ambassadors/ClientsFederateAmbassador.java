@@ -1,8 +1,6 @@
 package federates.ambassadors;
 
 import federates.ClientsFederate;
-import hla.rti1516e.AttributeHandle;
-import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.FederateHandleSet;
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.LogicalTime;
@@ -14,9 +12,6 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.ParameterHandleValueMap;
 import hla.rti1516e.SynchronizationPointFailureReason;
 import hla.rti1516e.TransportationTypeHandle;
-import hla.rti1516e.encoding.DecoderException;
-import hla.rti1516e.encoding.HLAinteger16BE;
-import hla.rti1516e.encoding.HLAinteger32BE;
 import hla.rti1516e.exceptions.FederateInternalError;
 import hla.rti1516e.time.HLAfloat64Time;
 
@@ -155,12 +150,19 @@ public class ClientsFederateAmbassador extends NullFederateAmbassador {
 
         // print the handle
         builder.append(" handle=" + interactionClass);
-        if (interactionClass.equals(federate.getNewClientHandle())) {
-            builder.append(" (NewClient)");
-        } else if (interactionClass.equals(federate.getTableBecomesFreeHandle())) {
-            builder.append(" (TableBecomesFree)");
-        } else if (interactionClass.equals(federate.getFreeTableShoutsHandle())) {
-            builder.append(" (FreeTableShouts)");
+        if (interactionClass.equals(federate.getNewInQueueHandle())) {
+            builder.append(" (NewInQueue)");
+        } else if (interactionClass.equals(federate.getLeaveFromQueueHandle())) {
+            builder.append(" (LeaveFromQueue)");
+        } else if (interactionClass.equals(federate.getClientImpatienceHandle())) {
+            builder.append(" (ClientImpatience)");
+        } else if (interactionClass.equals(federate.getNewInRestaurantHandle())) {
+            builder.append(" (NewInRestaurant)");
+        } else if (interactionClass.equals(federate.getStartingClientServiceHandle())) {
+            builder.append(" (StartingClientService)");
+        } else if (interactionClass.equals(federate.getPaymentServiceHandle())) {
+            builder.append(" (PaymentService)");
+
         }
 
         // print the tag

@@ -1,20 +1,12 @@
 package federates;
 
 import federates.ambassadors.ClientsFederateAmbassador;
-import hla.rti1516e.AttributeHandle;
-import hla.rti1516e.AttributeHandleSet;
-import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ObjectClassHandle;
-import hla.rti1516e.ObjectInstanceHandle;
-import hla.rti1516e.ParameterHandleValueMap;
 import hla.rti1516e.RTIambassador;
 import hla.rti1516e.ResignAction;
 import hla.rti1516e.RtiFactoryFactory;
-import hla.rti1516e.encoding.EncoderFactory;
-import hla.rti1516e.encoding.HLAinteger16BE;
-import hla.rti1516e.encoding.HLAinteger32BE;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
 import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
@@ -28,7 +20,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
 
 
 public class ClientsFederate {
@@ -308,32 +299,32 @@ public class ClientsFederate {
 
         // get all the handle information for the attributes of Food.Drink.Soda
         this.queueHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Queue");
-	this.waiterHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Waiter");
-	this.tableHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Table");
+	    this.waiterHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Waiter");
+	    this.tableHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Table");
         this.clientHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Client");
         this.mealHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Meal");
-	this.newClientHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewClient");
-	this.clientTookTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientTookTable");
-	this.clientCallsWaiterHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
-	this.clientOrdersMealHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
-	this.clientAsksForBillHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
-	this.endingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
-	this.clientLeftTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientLeftTable");
-	this.newInQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
-	this.leaveFromQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
-	this.clientImpatienceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
-	this.newInRestaurantHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInRestaurant");
-	this.startingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.StartingClientService");
-	this.paymentServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.PaymentService");
+        this.newClientHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewClient");
+        this.clientTookTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientTookTable");
+        this.clientCallsWaiterHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
+        this.clientOrdersMealHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
+        this.clientAsksForBillHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
+        this.endingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
+        this.clientLeftTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientLeftTable");
+        this.newInQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
+        this.leaveFromQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+        this.clientImpatienceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+        this.newInRestaurantHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInRestaurant");
+        this.startingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.StartingClientService");
+        this.paymentServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.PaymentService");
 		
         // do the actual publication
-	rtiamb.publishInteractionClass(newClientHandle);
-	rtiamb.publishInteractionClass(clientTookTableHandle);
-	rtiamb.publishInteractionClass(clientCallsWaiterHandle);
-	rtiamb.publishInteractionClass(clientOrdersMealHandle);
-	rtiamb.publishInteractionClass(clientAsksForBillHandle);
-	rtiamb.publishInteractionClass(endingClientServiceHandle);
-	rtiamb.publishInteractionClass(clientLeftTableHandle);
+        rtiamb.publishInteractionClass(newClientHandle);
+        rtiamb.publishInteractionClass(clientTookTableHandle);
+        rtiamb.publishInteractionClass(clientCallsWaiterHandle);
+        rtiamb.publishInteractionClass(clientOrdersMealHandle);
+        rtiamb.publishInteractionClass(clientAsksForBillHandle);
+        rtiamb.publishInteractionClass(endingClientServiceHandle);
+        rtiamb.publishInteractionClass(clientLeftTableHandle);
 
 
         /////////////////////////////////////////////////////////
@@ -341,12 +332,12 @@ public class ClientsFederate {
         /////////////////////////////////////////////////////////
         // we also want to receive other interaction of the same type that are
         // sent out by other federates, so we have to subscribe to it first
-	rtiamb.subscribeInteractionClass(newInQueueHandle);
-	rtiamb.subscribeInteractionClass(leaveFromQueueHandle);
-	rtiamb.subscribeInteractionClass(clientImpatienceHandle);
-	rtiamb.subscribeInteractionClass(newInRestaurantHandle);
-	rtiamb.subscribeInteractionClass(startingClientServiceHandle);
-	rtiamb.subscribeInteractionClass(paymentServiceHandle);
+        rtiamb.subscribeInteractionClass(newInQueueHandle);
+        rtiamb.subscribeInteractionClass(leaveFromQueueHandle);
+        rtiamb.subscribeInteractionClass(clientImpatienceHandle);
+        rtiamb.subscribeInteractionClass(newInRestaurantHandle);
+        rtiamb.subscribeInteractionClass(startingClientServiceHandle);
+        rtiamb.subscribeInteractionClass(paymentServiceHandle);
     }
 
     /**
@@ -386,17 +377,28 @@ public class ClientsFederate {
         }
     }
 
-    public InteractionClassHandle getNewClientHandle() {
+    public InteractionClassHandle getNewInQueueHandle() {
         return newClientHandle;
     }
 
-    public InteractionClassHandle getTableBecomesFreeHandle() {
-        return tableBecomesFreeHandle;
+    public InteractionClassHandle getLeaveFromQueueHandle() {
+        return leaveFromQueueHandle;
     }
 
-    public InteractionClassHandle getFreeTableShoutsHandle() {
-        return freeTableShoutsHandle;
+    public InteractionClassHandle getClientImpatienceHandle() {
+        return clientImpatienceHandle;
     }
 
+    public InteractionClassHandle getNewInRestaurantHandle() {
+        return newInRestaurantHandle;
+    }
+
+    public InteractionClassHandle getStartingClientServiceHandle() {
+        return startingClientServiceHandle;
+    }
+
+    public InteractionClassHandle getPaymentServiceHandle() {
+        return paymentServiceHandle;
+    }
 
 }
