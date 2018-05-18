@@ -2,6 +2,8 @@ package federates;
 
 import federates.ambassadors.ClientsFederateAmbassador;
 import hla.rti1516e.*;
+import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAinteger64BE;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
 import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
@@ -37,6 +39,7 @@ public class ClientsFederate {
     private RTIambassador rtiamb;
     private ClientsFederateAmbassador fedamb;  // created when we connect
     private HLAfloat64TimeFactory timeFactory; // set when we join
+    protected EncoderFactory encoderFactory;     // set when we join
 
     protected ObjectClassHandle clientHandle;
     protected ObjectClassHandle queueHandle;
@@ -56,6 +59,7 @@ public class ClientsFederate {
     protected InteractionClassHandle newInRestaurantHandle;
     protected InteractionClassHandle startingClientServiceHandle;
     protected InteractionClassHandle paymentServiceHandle;
+    protected ParameterHandle newClientClientIdHandle;
 
     //----------------------------------------------------------
     //                      CONSTRUCTORS
@@ -102,6 +106,7 @@ public class ClientsFederate {
         /////////////////////////////////////////////////
         log("Creating RTIambassador");
         rtiamb = RtiFactoryFactory.getRtiFactory().getRtiAmbassador();
+        encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory();
 
         // connect
         log("Connecting...");
@@ -313,6 +318,7 @@ public class ClientsFederate {
         this.newInRestaurantHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInRestaurant");
         this.startingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.StartingClientService");
         this.paymentServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.PaymentService");
+        newClientClientIdHandle = rtiamb.getParameterHandle(newClientHandle, "clientId");
 		
         // do the actual publication
         rtiamb.publishInteractionClass(newClientHandle);
@@ -347,8 +353,10 @@ public class ClientsFederate {
         createClient();
     }
 
-    private void createClient() throws RTIexception {
-        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(1); //TODO: dla @Konrad
+    private void createClient() throws RTIexception { // @TODO to test
+        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(1);
+        HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(5); // @TODO
+        parameters.put(newClientClientIdHandle, clientId.toByteArray());
         rtiamb.sendInteraction(newClientHandle, parameters, generateTag());
     }
 
