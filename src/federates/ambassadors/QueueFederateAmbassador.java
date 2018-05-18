@@ -18,6 +18,7 @@ import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.HLAinteger16BE;
 import hla.rti1516e.encoding.HLAinteger32BE;
 import hla.rti1516e.exceptions.FederateInternalError;
+import hla.rti1516e.exceptions.RTIexception;
 import hla.rti1516e.time.HLAfloat64Time;
 
 /**
@@ -157,6 +158,12 @@ public class QueueFederateAmbassador extends NullFederateAmbassador {
         builder.append(" handle=" + interactionClass);
         if (interactionClass.equals(federate.getNewClientHandle())) {
             builder.append(" (NewClient)");
+
+            try {
+                federate.addClient(); // @TODO send client id
+            } catch (RTIexception rtIexception) {
+                rtIexception.printStackTrace();
+            }
         } else if (interactionClass.equals(federate.getTableBecomesFreeHandle())) {
             builder.append(" (TableBecomesFree)");
         } else if (interactionClass.equals(federate.getFreeTableShoutsHandle())) {

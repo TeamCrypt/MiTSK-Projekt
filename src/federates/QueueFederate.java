@@ -1,20 +1,13 @@
 package federates;
 
 import federates.ambassadors.QueueFederateAmbassador;
-import hla.rti1516e.AttributeHandle;
-import hla.rti1516e.AttributeHandleSet;
-import hla.rti1516e.AttributeHandleValueMap;
 import hla.rti1516e.CallbackModel;
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ObjectClassHandle;
-import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.ParameterHandleValueMap;
 import hla.rti1516e.RTIambassador;
 import hla.rti1516e.ResignAction;
 import hla.rti1516e.RtiFactoryFactory;
-import hla.rti1516e.encoding.EncoderFactory;
-import hla.rti1516e.encoding.HLAinteger16BE;
-import hla.rti1516e.encoding.HLAinteger32BE;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
 import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
@@ -28,7 +21,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Random;
 
 
 public class QueueFederate {
@@ -214,7 +206,7 @@ public class QueueFederate {
             // updateAttributeValues(objectHandle);
 
             // 9.2 send an interaction
-            // sendInteraction();
+            sendInteraction();
 
             // 9.3 request a time advance and wait until we get it
             advanceTime(1.0);
@@ -325,6 +317,16 @@ public class QueueFederate {
     }
 
     /**
+     * This method will send out an interaction of the type FoodServed.DrinkServed. Any
+     * federates which are subscribed to it will receive a notification the next time
+     * they tick(). This particular interaction has no parameters, so you pass an empty
+     * map, but the process of encoding them is the same as for attributes.
+     */
+    private void sendInteraction() throws RTIexception {
+        addClient();
+    }
+
+    /**
      * This method will request a time advance to the current time, plus the given
      * timestep. It will then wait until a notification of the time advance grant
      * has been received.
@@ -340,6 +342,10 @@ public class QueueFederate {
         while (fedamb.getIsAdvancing()) {
             rtiamb.evokeMultipleCallbacks(0.1, 0.2);
         }
+    }
+
+    private byte[] generateTag() {
+        return ("(timestamp) " + System.currentTimeMillis()).getBytes();
     }
 
     //----------------------------------------------------------
@@ -374,4 +380,8 @@ public class QueueFederate {
     }
 
 
+    public void addClient() throws RTIexception { // @TODO get client id
+        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(0);
+        rtiamb.sendInteraction(newInQueueHandle, parameters, generateTag());
+    }
 }
