@@ -291,7 +291,6 @@ public class QueueFederate {
         // that we intend to publish this information
 
         // get all the handle information for the attributes of Food.Drink.Soda
-        this.queueHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Queue");
         this.clientHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Client");
         this.tableHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Table");
         this.newInQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");

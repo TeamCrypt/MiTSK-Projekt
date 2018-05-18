@@ -11,10 +11,6 @@
 	<objects>
 		<objectClass>
 			<name>HLAobjectRoot</name>
-			<objectClass>
-				<name>Queue</name>
-				<sharing>PublishSubscribe</sharing>
-			</objectClass>
 		</objectClass>
 	</objects>
 	<interactions>
