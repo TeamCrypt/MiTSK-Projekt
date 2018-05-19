@@ -1,12 +1,9 @@
 package federates;
 
-import federates.ambassadors.StatisticsFederateAmbassador;
-import hla.rti1516e.CallbackModel;
-import hla.rti1516e.InteractionClassHandle;
-import hla.rti1516e.RTIambassador;
-import hla.rti1516e.ResignAction;
-import hla.rti1516e.RtiFactoryFactory;
+import federates.ambassadors.ClientsFederateAmbassador;
+import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
+import hla.rti1516e.encoding.HLAinteger64BE;
 import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
 import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
 import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
@@ -21,63 +18,8 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * This is an example federate demonstrating how to properly use the IEEE 1516-2010 (HLA Evolved)
- * Java interface supplied with Portico. The code provided here is intended to break down many
- * common actions into their atomic elemenets and form a demonstration of the processed needed to
- * perform them. As such, the scenario has been kept purposefully simple.
- * 
- * As it is intended for example purposes, this is a rather simple federate. The
- * process is goes through is as follows:
- * 
- *  1.  Create the RTIambassador
- *  2.  Connect to the RTIamsassador
- *  3.  Try to create the federation (nofail)
- *  4.  Join the federation
- *  5.  Announce a Synchronization Point (nofail)
- *  6.  Wait for the federation to Synchronized on the point
- *  7.  Enable Time Regulation and Constrained
- *  8.  Publish and Subscribe
- *  9. Main Simulation Loop (executes 20 times)
- *       9.1 Advance time by 1.0
- * 10. Resign from Federation
- * 11. Try to destroy the federation (nofail)
- * 12. Disconnect from the RTI
- * 
- * NOTE: Those items marked with (nofail) deal with situations where multiple
- *       federates may be working in the federation. In this sitaution, the
- *       federate will attempt to carry out the tasks defined, but it won't
- *       stop or exit if they fail. For example, if another federate has already
- *       created the federation, the call to create it again will result in an
- *       exception. The example federate expects this and will not fail.
- * NOTE: Between actions 4. and 5., the federate will pause until the uses presses
- *       the enter key. This will give other federates a chance to enter the
- *       federation and prevent other federates from racing ahead.
- *
- * With regard to the FederateAmbassador, it will log all incoming information. Thus,
- * if it receives any reflects or interactions etc... you will be notified of them.
- * 
- * Note that all of the methods throw an RTIexception. This class is the parent of all
- * HLA exceptions. The HLA Java interface is full of exceptions, with only a handful 
- * being actually useful. To make matters worse, they're all checked exceptions, so
- * unlike C++, we are forced to handle them by the compiler. This is unnecessary in
- * this small example, so we'll just throw all exceptions out to the main method and
- * handle them there, rather than handling each exception independently as they arise.
- * 
- * **Modular FOMs**
- * The Portico 1516e RTI supports the use of modular FOMs when creating or joining a federation.
- * This example federate uses an example set of FOM modules produced by Pitch (http://pitch.se).
- * The example FOM is taken from the standard HLA Restaurant Operations model. It is split
- * over four separate modules:
- *   1. Restaurant Operations (RestaurantProcesses.xml)
- *   2. Restaurant Food       (RestaurantFood.xml)
- *   3. Restaurant Drinks     (RestaurantDrinks.xml)
- *   4. Restaurant Soup       (RestaurantSoup.xml)
- * 
- * In the demonstration, the first three modules are loaded as part of the federation creation
- * process, with the example federate providing the Soup-based extension when it joins.
- */
-public class StatisticsFederate {
+
+public class ClientsFederate {
     //----------------------------------------------------------
     //                    STATIC VARIABLES
     //----------------------------------------------------------
@@ -95,18 +37,29 @@ public class StatisticsFederate {
     //                   INSTANCE VARIABLES
     //----------------------------------------------------------
     private RTIambassador rtiamb;
-    private StatisticsFederateAmbassador fedamb;  // created when we connect
+    private ClientsFederateAmbassador fedamb;  // created when we connect
     private HLAfloat64TimeFactory timeFactory; // set when we join
+    protected EncoderFactory encoderFactory;     // set when we join
 
-    // caches of handle types - set once we join a federation
+    protected ObjectClassHandle clientHandle;
+    protected ObjectClassHandle queueHandle;
+    protected ObjectClassHandle waiterHandle;
+    protected ObjectClassHandle tableHandle;
+    protected ObjectClassHandle mealHandle;
+    protected InteractionClassHandle newClientHandle;
+    protected InteractionClassHandle clientTookTableHandle;
+    protected InteractionClassHandle clientCallsWaiterHandle;
+    protected InteractionClassHandle clientOrdersMealHandle;
+    protected InteractionClassHandle clientAsksForBillHandle;
+    protected InteractionClassHandle endingClientServiceHandle;
+    protected InteractionClassHandle clientLeftTableHandle;
     protected InteractionClassHandle newInQueueHandle;
     protected InteractionClassHandle leaveFromQueueHandle;
     protected InteractionClassHandle clientImpatienceHandle;
-
-    // Counters
-    private Integer clientsCounter = 0;
-    private Integer leavedClientsCounter = 0;
-    private Integer impatientClientsCounter = 0;
+    protected InteractionClassHandle newInRestaurantHandle;
+    protected InteractionClassHandle startingClientServiceHandle;
+    protected InteractionClassHandle paymentServiceHandle;
+    protected ParameterHandle newClientClientIdHandle;
 
     //----------------------------------------------------------
     //                      CONSTRUCTORS
@@ -120,7 +73,7 @@ public class StatisticsFederate {
      * This is just a helper method to make sure all logging it output in the same form
      */
     private void log(String message) {
-        System.out.println("StatisticsFederate   : " + message);
+        System.out.println("ClientsFederate   : " + message);
     }
 
     /**
@@ -146,24 +99,27 @@ public class StatisticsFederate {
      * the federate. For a description of the basic flow of this federate, see the
      * class level comments
      */
+
     public void runFederate(String federateName) throws Exception {
         /////////////////////////////////////////////////
         // 1 & 2. create the RTIambassador and Connect //
         /////////////////////////////////////////////////
         log("Creating RTIambassador");
         rtiamb = RtiFactoryFactory.getRtiFactory().getRtiAmbassador();
+        encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory();
 
         // connect
         log("Connecting...");
-        fedamb = new StatisticsFederateAmbassador(this);
+        fedamb = new ClientsFederateAmbassador(this);
         rtiamb.connect(fedamb, CallbackModel.HLA_EVOKED);
 
         //////////////////////////////
         // 3. create the federation //
         //////////////////////////////
         log("Creating Federation...");
-        // We attempt to create a new federation with the first three of the
-        // restaurant FOM modules covering processes, food and drink
+
+        // We attempt to create a new federation with the clients
+        // FOM module
         try {
             URL[] modules = new URL[]{
                     (new File("foms/Clients.xml")).toURI().toURL(),
@@ -185,11 +141,11 @@ public class StatisticsFederate {
         // 4. join the federation //
         ////////////////////////////
         URL[] joinModules = new URL[]{
-                (new File("foms/Statistics.xml")).toURI().toURL()
+                (new File("foms/Clients.xml")).toURI().toURL()
         };
 
         rtiamb.joinFederationExecution(federateName,            // name for the federate
-                "StatisticsFederateType",   // federate type
+                "ClientsFederateType",   // federate type
                 "ExampleFederation",     // name of federation
                 joinModules);           // modules we want to add
 
@@ -240,29 +196,47 @@ public class StatisticsFederate {
         //////////////////////////////
         // in this section we tell the RTI of all the data we are going to
         // produce, and all the data we want to know about
-        subscribe();
+        publishAndSubscribe();
         log("Published and Subscribed");
 
         /////////////////////////////////////
-        // 9. do the main simulation loop //
+        // 9. register an object to update //
+        /////////////////////////////////////
+        //ObjectInstanceHandle objectHandle = registerObject();
+        //log("Registered Object, handle=" + objectHandle);
+
+        /////////////////////////////////////
+        // 10. do the main simulation loop //
         /////////////////////////////////////
         // here is where we do the meat of our work. in each iteration, we will
         // update the attribute values of the object we registered, and will
         // send an interaction.
         for (int i = 0; i < ITERATIONS; i++) {
-            // 9.1 request a time advance and wait until we get it
+            // 9.1 update the attribute values of the instance //
+            // updateAttributeValues(objectHandle);
+
+            // 9.2 send an interaction
+            sendInteraction();
+
+            // 9.3 request a time advance and wait until we get it
             advanceTime(1.0);
             log("Time Advanced to " + fedamb.getFederateTime());
         }
 
+        //////////////////////////////////////
+        // 11. delete the object we created //
+        //////////////////////////////////////
+        // deleteObject(objectHandle);
+        // log("Deleted Object, handle=" + objectHandle);
+
         ////////////////////////////////////
-        // 10. resign from the federation //
+        // 12. resign from the federation //
         ////////////////////////////////////
         rtiamb.resignFederationExecution(ResignAction.DELETE_OBJECTS);
         log("Resigned from Federation");
 
         ////////////////////////////////////////
-        // 11. try and destroy the federation //
+        // 13. try and destroy the federation //
         ////////////////////////////////////////
         // NOTE: we won't die if we can't do this because other federates
         //       remain. in that case we'll leave it for them to clean up
@@ -317,20 +291,73 @@ public class StatisticsFederate {
      * be creating, and the types of data we are interested in hearing about as other
      * federates produce it.
      */
-    private void subscribe() throws RTIexception {
+    private void publishAndSubscribe() throws RTIexception {
+        ///////////////////////////////////////////////
+        // publish all attributes of Food.Drink.Soda //
+        ///////////////////////////////////////////////
+        // before we can register instance of the object class Food.Drink.Soda and
+        // update the values of the various attributes, we need to tell the RTI
+        // that we intend to publish this information
+
+        // get all the handle information for the attributes of Food.Drink.Soda
+        this.queueHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Queue");
+	    this.waiterHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Waiter");
+	    this.tableHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Table");
+        this.clientHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Client");
+        this.mealHandle = rtiamb.getObjectClassHandle("HLAobjectRoot.Meal");
+        this.newClientHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewClient");
+        this.clientTookTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientTookTable");
+        this.clientCallsWaiterHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
+        this.clientOrdersMealHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
+        this.clientAsksForBillHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
+        this.endingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
+        this.clientLeftTableHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.ClientLeftTable");
+        this.newInQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
+        this.leaveFromQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+        this.clientImpatienceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+        this.newInRestaurantHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInRestaurant");
+        this.startingClientServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.StartingClientService");
+        this.paymentServiceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.PaymentService");
+        newClientClientIdHandle = rtiamb.getParameterHandle(newClientHandle, "clientId");
+		
+        // do the actual publication
+        rtiamb.publishInteractionClass(newClientHandle);
+        rtiamb.publishInteractionClass(clientTookTableHandle);
+        rtiamb.publishInteractionClass(clientCallsWaiterHandle);
+        rtiamb.publishInteractionClass(clientOrdersMealHandle);
+        rtiamb.publishInteractionClass(clientAsksForBillHandle);
+        rtiamb.publishInteractionClass(endingClientServiceHandle);
+        rtiamb.publishInteractionClass(clientLeftTableHandle);
+
+
         /////////////////////////////////////////////////////////
-        // subscribe to the NewInQueue and LeaveFromQueue interaction //
+        // subscribe to the FoodServed.DrinkServed interaction //
         /////////////////////////////////////////////////////////
         // we also want to receive other interaction of the same type that are
         // sent out by other federates, so we have to subscribe to it first
-        newInQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
         rtiamb.subscribeInteractionClass(newInQueueHandle);
-
-        leaveFromQueueHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
         rtiamb.subscribeInteractionClass(leaveFromQueueHandle);
-
-        clientImpatienceHandle = rtiamb.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
         rtiamb.subscribeInteractionClass(clientImpatienceHandle);
+        rtiamb.subscribeInteractionClass(newInRestaurantHandle);
+        rtiamb.subscribeInteractionClass(startingClientServiceHandle);
+        rtiamb.subscribeInteractionClass(paymentServiceHandle);
+    }
+
+    /**
+     * This method will send out an interaction of the type FoodServed.DrinkServed. Any
+     * federates which are subscribed to it will receive a notification the next time
+     * they tick(). This particular interaction has no parameters, so you pass an empty
+     * map, but the process of encoding them is the same as for attributes.
+     */
+    private void sendInteraction() throws RTIexception {
+        createClient();
+    }
+
+    private void createClient() throws RTIexception { // @TODO to test
+        ParameterHandleValueMap parameters = rtiamb.getParameterHandleValueMapFactory().create(1);
+        HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(5); // @TODO
+        parameters.put(newClientClientIdHandle, clientId.toByteArray());
+        rtiamb.sendInteraction(newClientHandle, parameters, generateTag());
     }
 
     /**
@@ -351,19 +378,23 @@ public class StatisticsFederate {
         }
     }
 
+    private byte[] generateTag() {
+        return ("(timestamp) " + System.currentTimeMillis()).getBytes();
+    }
+
     //----------------------------------------------------------
     //                     STATIC METHODS
     //----------------------------------------------------------
     public static void main(String[] args) {
-        // get a federate name, use "StatisticsFederate" as default
-        String federateName = "StatisticsFederate";
+        // get a federate name, use "clientsFederate" as default
+        String federateName = "clientsFederate";
         if (args.length != 0) {
             federateName = args[0];
         }
 
         try {
             // run the example federate
-            new StatisticsFederate().runFederate(federateName);
+            new ClientsFederate().runFederate(federateName);
         } catch (Exception rtie) {
             // an exception occurred, just log the information and exit
             rtie.printStackTrace();
@@ -377,22 +408,21 @@ public class StatisticsFederate {
     public InteractionClassHandle getLeaveFromQueueHandle() {
         return leaveFromQueueHandle;
     }
-    
+
     public InteractionClassHandle getClientImpatienceHandle() {
         return clientImpatienceHandle;
     }
-    
-    public Integer incrementClientsCounter() {
-        return ++clientsCounter;
+
+    public InteractionClassHandle getNewInRestaurantHandle() {
+        return newInRestaurantHandle;
     }
 
-    public Integer incrementLeavedClientsCounter() {
-        return ++leavedClientsCounter;
+    public InteractionClassHandle getStartingClientServiceHandle() {
+        return startingClientServiceHandle;
     }
 
-    public Integer increaseImpatientClientsCounter() {
-        incrementLeavedClientsCounter();
-
-        return ++impatientClientsCounter;
+    public InteractionClassHandle getPaymentServiceHandle() {
+        return paymentServiceHandle;
     }
+
 }
