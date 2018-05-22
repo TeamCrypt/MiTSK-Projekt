@@ -27,6 +27,10 @@ public class AbstractFederateAmbassador extends NullFederateAmbassador {
         this.federate = federate;
     }
 
+    protected AbstractFederate getFederate() {
+        return federate;
+    }
+
     public double getFederateLookahead() {
         return federateLookahead;
     }
@@ -68,6 +72,7 @@ public class AbstractFederateAmbassador extends NullFederateAmbassador {
 
         return this;
     }
+
     @Override
     public void synchronizationPointRegistrationFailed(String label,
                                                        SynchronizationPointFailureReason reason) {
