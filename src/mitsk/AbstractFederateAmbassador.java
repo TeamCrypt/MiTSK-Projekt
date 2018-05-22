@@ -89,9 +89,43 @@ public class AbstractFederateAmbassador extends NullFederateAmbassador {
 
     @Override
     public void receiveInteraction(InteractionClassHandle interactionClass, ParameterHandleValueMap theParameters, byte[] userSuppliedTag, OrderType sentOrdering, TransportationTypeHandle theTransport, SupplementalReceiveInfo receiveInfo) throws FederateInternalError {
-        super.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, receiveInfo);
-
         receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, null, sentOrdering, receiveInfo);
+    }
+
+    @Override
+    public void receiveInteraction(InteractionClassHandle interactionClass, ParameterHandleValueMap theParameters, byte[] userSuppliedTag, OrderType sentOrdering, TransportationTypeHandle theTransport, LogicalTime theTime, OrderType receivedOrdering, SupplementalReceiveInfo receiveInfo) throws FederateInternalError {
+        receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, null, receiveInfo);
+    }
+
+    @Override
+    public void receiveInteraction(InteractionClassHandle interactionClass, ParameterHandleValueMap theParameters, byte[] userSuppliedTag, OrderType sentOrdering, TransportationTypeHandle theTransport, LogicalTime theTime, OrderType receivedOrdering, MessageRetractionHandle retractionHandle, SupplementalReceiveInfo receiveInfo) throws FederateInternalError {
+        StringBuilder builder = new StringBuilder("Interaction Received:");
+
+        // print the handle
+        builder.append(" handle=").append(interactionClass);
+
+        // print the tag
+        builder.append(", tag=").append(new String(userSuppliedTag));
+        // print the time (if we have it) we'll get null if we are just receiving
+        // a forwarded call from the other reflect callback above
+        if (theTime != null) {
+            builder.append(", time=").append(((HLAfloat64Time) theTime).getValue());
+        }
+
+        // print the parameer information
+        builder.append(", parameterCount=").append(theParameters.size());
+        builder.append("\n");
+        for (ParameterHandle parameter : theParameters.keySet()) {
+            // print the parameter handle
+            builder.append("\tparamHandle=");
+            builder.append(parameter);
+            // print the parameter value
+            builder.append(", paramValue=");
+            builder.append(theParameters.get(parameter).length);
+            builder.append(" bytes");
+        }
+
+        log(builder.toString());
     }
 
     @Override

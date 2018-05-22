@@ -30,16 +30,22 @@ public class Federate extends AbstractFederate {
     }
 
     private void addClientsToQueue() {
+        List<Client> toRemove = new ArrayList<>();
+
         for (Client client : newInQueue) {
             try {
                 NewInQueue newInQueue = new NewInQueue(getRTIAmbassador(), client);
 
                 newInQueue.sendInteraction();
 
-                this.newInQueue.remove(client);
+                toRemove.add(client);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        }
+
+        if (toRemove.size() > 0) {
+            newInQueue.removeAll(toRemove);
         }
     }
 
