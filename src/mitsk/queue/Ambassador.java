@@ -10,17 +10,10 @@ import mitsk.AbstractFederateAmbassador;
 public class Ambassador extends AbstractFederateAmbassador {
     private EncoderFactory encoderFactory;
 
-    Ambassador(AbstractFederate federate) throws Exception {
+    Ambassador(AbstractFederate federate) {
         super(federate);
 
         encoderFactory = getFederate().getEncoderFactory();
-    }
-
-    @Override
-    public void receiveInteraction(InteractionClassHandle interactionClass, ParameterHandleValueMap theParameters, byte[] userSuppliedTag, OrderType sentOrdering, TransportationTypeHandle theTransport, SupplementalReceiveInfo receiveInfo) throws FederateInternalError {
-        super.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, receiveInfo);
-
-        receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, null, sentOrdering, receiveInfo);
     }
 
     @Override

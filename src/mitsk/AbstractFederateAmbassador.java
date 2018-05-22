@@ -1,9 +1,7 @@
 package mitsk;
 
-import hla.rti1516e.FederateHandleSet;
-import hla.rti1516e.LogicalTime;
-import hla.rti1516e.NullFederateAmbassador;
-import hla.rti1516e.SynchronizationPointFailureReason;
+import hla.rti1516e.*;
+import hla.rti1516e.exceptions.FederateInternalError;
 import hla.rti1516e.time.HLAfloat64Time;
 
 public class AbstractFederateAmbassador extends NullFederateAmbassador {
@@ -74,17 +72,6 @@ public class AbstractFederateAmbassador extends NullFederateAmbassador {
     }
 
     @Override
-    public void synchronizationPointRegistrationFailed(String label,
-                                                       SynchronizationPointFailureReason reason) {
-        log("Failed to register sync point: " + label + ", reason=" + reason);
-    }
-
-    @Override
-    public void synchronizationPointRegistrationSucceeded(String label) {
-        log("Successfully registered sync point: " + label);
-    }
-
-    @Override
     public void announceSynchronizationPoint(String label, byte[] tag) {
         log("Synchronization point announced: " + label);
         if (label.equals(AbstractFederate.READY_TO_RUN)) {
@@ -98,6 +85,24 @@ public class AbstractFederateAmbassador extends NullFederateAmbassador {
         if (label.equals(AbstractFederate.READY_TO_RUN)) {
             isReadyToRun = true;
         }
+    }
+
+    @Override
+    public void receiveInteraction(InteractionClassHandle interactionClass, ParameterHandleValueMap theParameters, byte[] userSuppliedTag, OrderType sentOrdering, TransportationTypeHandle theTransport, SupplementalReceiveInfo receiveInfo) throws FederateInternalError {
+        super.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, receiveInfo);
+
+        receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, null, sentOrdering, receiveInfo);
+    }
+
+    @Override
+    public void synchronizationPointRegistrationFailed(String label,
+                                                       SynchronizationPointFailureReason reason) {
+        log("Failed to register sync point: " + label + ", reason=" + reason);
+    }
+
+    @Override
+    public void synchronizationPointRegistrationSucceeded(String label) {
+        log("Successfully registered sync point: " + label);
     }
 
     @Override
