@@ -45,7 +45,7 @@ public abstract class AbstractFederate {
         }
     }
 
-    protected abstract AbstractFederateAmbassador createAmbassador();
+    protected abstract AbstractFederateAmbassador createAmbassador() throws Exception;
 
     private void createFederation() throws Exception {
         log("Create federation");
@@ -72,12 +72,28 @@ public abstract class AbstractFederate {
         log("Time policy enabled");
     }
 
+    protected byte[] generateTag() {
+        return ("(timestamp) " + System.currentTimeMillis()).getBytes();
+    }
+
+    public EncoderFactory getEncoderFactory() {
+        return encoderFactory;
+    }
+
+    protected final AbstractFederateAmbassador getFederateAmbassador() {
+        return federateAmbassador;
+    }
+
     protected abstract URL[] getFederationModules() throws MalformedURLException;
 
     protected abstract URL[] getJoinModules() throws MalformedURLException;
 
     public final String getName() {
         return getClass().getName();
+    }
+
+    protected final RTIambassador getRTIAmbassador() {
+        return rtiAmbassador;
     }
 
     private String getType() {
@@ -128,7 +144,7 @@ public abstract class AbstractFederate {
         subscribe();
     }
 
-    protected abstract void publish();
+    protected abstract void publish() throws Exception;
 
     protected void resignFederation() throws Exception {
         rtiAmbassador.resignFederationExecution(ResignAction.DELETE_OBJECTS);
@@ -154,9 +170,9 @@ public abstract class AbstractFederate {
         waitForSynchronization();
     }
 
-    protected abstract void subscribe();
+    protected abstract void subscribe() throws Exception;
 
-    protected final void waitForSynchronization() throws Exception {
+    private void waitForSynchronization() throws Exception {
         rtiAmbassador.registerFederationSynchronizationPoint(READY_TO_RUN, null);
 
         while (!federateAmbassador.getIsAnnounced()) {
