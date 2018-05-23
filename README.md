@@ -18,10 +18,17 @@
 
 * `foms/` - zawiera modele FOM.
 * `src/` - zawiera pliki źródłowe aplikacji.
-    * `federates/` - zawiera klasy federatórw.
-        * `ambassadors/` - zawiera klasy ambasadorów federatów.
-    * `interactions/` - zawiera pomocnicze klasy interakcji.
-    * `objects/` - zawiera pomocnicze klasy obiektów.
+    * `clients/` - pakiet federatu klientów.
+    * `queue/` - pakiet federatu kolejki.
+    * `statistics/` - pakiet federatu statystyk.
+
+Pakiet każdego federatu powinien zawierać:
+* Klase `Federate` - będącą klasą danego federatu,
+* Klasę `Ambassador` - będącą klasą ambasadora federatu.
+
+Opcjonalnie pakiety federatów mogą zawierać pakiety:
+* `interaction/` - zawiera pomocnicze klasy interakcji,
+* `object/` - zawiera pomocnicze klasy obiektów.
 
 ## Uwagi
 _Commity_ powinny być opatrzone etykietą `GH-[numer utworzonego issue]`. Odwołania do użytkownika robimy za pomocą `@[NAZWA UŻYTKOWNIKA]`.
