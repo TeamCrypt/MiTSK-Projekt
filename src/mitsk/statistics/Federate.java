@@ -10,16 +10,25 @@ import mitsk.statistics.object.Client;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Queue;
 
 public class Federate extends AbstractFederate {
     private static final int ITERATIONS = 20;
+
+    private InteractionClassHandle clientImpatienceInteractionClassHandle;
+
+    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
 
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
     private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
 
     private HashMap<Long, Client> clients = new HashMap<>();
+
+    private List<Double> times = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -34,6 +43,14 @@ public class Federate extends AbstractFederate {
     @Override
     protected AbstractFederateAmbassador createAmbassador() {
         return new Ambassador(this);
+    }
+
+    public InteractionClassHandle getClientImpatienceInteractionClassHandle() {
+        return clientImpatienceInteractionClassHandle;
+    }
+
+    public ParameterHandle getClientImpatienceInteractionClassClientIdParameterHandle() {
+        return clientImpatienceInteractionClassClientIdParameterHandle;
     }
 
     @Override
@@ -75,6 +92,11 @@ public class Federate extends AbstractFederate {
         // empty
     }
 
+
+    public void removeImpatientClientFromStatistics(Long clientId) {
+        times.add(getFederateAmbassador().getFederateTime() - clients.remove(clientId).getFederateTime());
+    }
+
     @Override
     public void run() throws Exception {
         super.run();
@@ -86,16 +108,46 @@ public class Federate extends AbstractFederate {
         }
 
         resignFederation();
+
+        log("Estimate time in queue: " + getEstimateTime());
+    }
+
+    private double getEstimateTime() {
+        double estimateTime = 0;
+        int counter = 0;
+
+        for (double time :
+                times) {
+            estimateTime += time;
+
+            ++counter;
+        }
+
+        if (counter > 0) {
+            return estimateTime / counter;
+        }
+
+        return estimateTime;
     }
 
     @Override
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        newInQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
+        { // NewInQueue
+            newInQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
 
-        rtiAmbassador.subscribeInteractionClass(newInQueueInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(newInQueueInteractionClassHandle);
 
-        newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newInQueueInteractionClassHandle, "clientId");
+            newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newInQueueInteractionClassHandle, "clientId");
+        }
+
+        { // ClientImpatience
+            clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+
+            rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
+
+            clientImpatienceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
+        }
     }
 }

@@ -5,6 +5,7 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.queue.interaction.ClientImpatience;
 import mitsk.queue.interaction.NewInQueue;
 import mitsk.queue.object.Client;
 
@@ -13,8 +14,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Federate extends AbstractFederate {
+    private static final double A = 1.0;
+
+    private static final double B = 10.0;
+
     private static final int ITERATIONS = 20;
 
     private InteractionClassHandle newClientInteractionClassHandle;
@@ -24,6 +30,8 @@ public class Federate extends AbstractFederate {
     private List<Client> newInQueue = new ArrayList<>();
 
     private List<Client> queue = new ArrayList<>();
+
+    private Random random = new Random();
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -50,7 +58,7 @@ public class Federate extends AbstractFederate {
     }
 
     void addClientToQueue(Long clientId) throws Exception {
-        Client client = new Client(getRTIAmbassador(), clientId);
+        Client client = new Client(getRTIAmbassador(), clientId, randomDouble(A, B));
 
         queue.add(client);
 
@@ -101,6 +109,36 @@ public class Federate extends AbstractFederate {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue"));
+
+        rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience"));
+    }
+
+    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
+        double value = (random.nextDouble() * (b - a)) + a;
+
+        return Math.round(value);
+    }
+
+    private void removeImpatientClients() {
+        List<Client> toRemove = new ArrayList<>();
+
+        for (Client client : queue) {
+            if (client.getImpatience() <= getFederateAmbassador().getFederateTime()) {
+                try {
+                    ClientImpatience clientImpatience = new ClientImpatience(getRTIAmbassador(), client);
+
+                    clientImpatience.sendInteraction();
+
+                    toRemove.add(client);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        if (toRemove.size() > 0) {
+            queue.removeAll(toRemove);
+        }
     }
 
     @Override
@@ -120,6 +158,8 @@ public class Federate extends AbstractFederate {
 
     private void sendInteraction() {
         addClientsToQueue();
+
+        removeImpatientClients();
     }
 
     @Override

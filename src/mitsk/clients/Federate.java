@@ -81,6 +81,12 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient"));
     }
 
+    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
+        double value = (random.nextDouble() * (b - a)) + a;
+
+        return Math.round(value);
+    }
+
     @Override
     public void run() throws Exception {
         super.run();
@@ -88,7 +94,7 @@ public class Federate extends AbstractFederate {
         for (int i = 0; i < ITERATIONS; i++) {
             sendInteraction();
 
-            advanceTime((random.nextDouble() * (B - A)) + A); // Generates time from A to B
+            advanceTime(randomDouble(A, B));
 
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }

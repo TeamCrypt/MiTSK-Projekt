@@ -15,7 +15,6 @@ public class NewInQueue extends AbstractInteraction {
 
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
-
     public NewInQueue(RTIambassador rtiAmbassador, Client client) throws Exception {
         super(rtiAmbassador);
 
