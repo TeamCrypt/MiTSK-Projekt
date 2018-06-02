@@ -7,11 +7,11 @@ import mitsk.AbstractInteraction;
 import mitsk.queue.object.Client;
 
 public class LeaveFromQueue extends AbstractInteraction {
-    private Client client;
+    protected Client client;
 
     private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
-    private EncoderFactory encoderFactory;
+    protected EncoderFactory encoderFactory;
 
     private InteractionClassHandle leaveFromQueueInteractionClassHandle;
 
