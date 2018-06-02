@@ -6,10 +6,14 @@ import mitsk.AbstractObject;
 public class Client extends AbstractObject {
     private Long identificationNumber;
 
-    public Client(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
+    private double impatience;
+
+    public Client(RTIambassador rtiAmbassador, Long identificationNumber, double impatience) throws Exception {
         super(rtiAmbassador);
 
         this.identificationNumber = identificationNumber;
+
+        this.impatience = impatience;
     }
 
     @Override
@@ -19,6 +23,10 @@ public class Client extends AbstractObject {
 
     public Long getIdentificationNumber() {
         return identificationNumber;
+    }
+
+    public double getImpatience() {
+        return impatience;
     }
 
     @Override
