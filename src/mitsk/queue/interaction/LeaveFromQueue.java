@@ -6,16 +6,16 @@ import hla.rti1516e.encoding.HLAinteger64BE;
 import mitsk.AbstractInteraction;
 import mitsk.queue.object.Client;
 
-public class NewInQueue extends AbstractInteraction {
+public class LeaveFromQueue extends AbstractInteraction {
     private Client client;
 
-    private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
+    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
     private EncoderFactory encoderFactory;
 
-    private InteractionClassHandle newInQueueInteractionClassHandle;
+    private InteractionClassHandle leaveFromQueueInteractionClassHandle;
 
-    public NewInQueue(RTIambassador rtiAmbassador, Client client) throws Exception {
+    public LeaveFromQueue(RTIambassador rtiAmbassador, Client client) throws Exception {
         super(rtiAmbassador);
 
         encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory();
@@ -31,17 +31,17 @@ public class NewInQueue extends AbstractInteraction {
 
         HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
 
-        parameters.put(newInQueueInteractionClassClientIdParameterHandle, clientId.toByteArray());
+        parameters.put(leaveFromQueueInteractionClassClientIdParameterHandle, clientId.toByteArray());
 
-        rtiAmbassador.sendInteraction(newInQueueInteractionClassHandle, parameters, generateTag());
+        rtiAmbassador.sendInteraction(leaveFromQueueInteractionClassHandle, parameters, generateTag());
     }
 
     @Override
     protected void setHandles() throws Exception {
         RTIambassador rtiAmbassador = getRtiAmbassador();
 
-        newInQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
+        leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
 
-        newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newInQueueInteractionClassHandle, "clientId");
+        leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
     }
 }
