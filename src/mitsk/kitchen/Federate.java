@@ -104,6 +104,38 @@ public class Federate extends AbstractFederate {
         return takeFoodInteractionClassMealIdParameterHandle;
     }
 
+    private void informAboutPreparedMeals() {
+        List<MealRequest> preparedRequests = new ArrayList<>();
+
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        double federationTime = getFederateAmbassador().getFederateTime();
+
+        for (MealRequest mealRequest : mealsRequests) {
+            if (mealRequest.getReadyAt() <= federationTime) {
+                try {
+                    Meal meal = mealRequest.getMeal();
+
+                    Client client = meal.getClient();
+
+                    PreparedMealRequest preparedMealRequest = new PreparedMealRequest(rtiAmbassador, client, meal);
+
+                    preparedMealRequest.sendInteraction();
+
+                    preparedRequests.add(mealRequest);
+
+                    preparedMeals.add(meal);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        if (preparedRequests.size() > 0) {
+            mealsRequests.removeAll(preparedRequests);
+        }
+    }
+
     public static void main(String[] args) {
         String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
 
@@ -160,38 +192,6 @@ public class Federate extends AbstractFederate {
 
     private void sendInteraction() {
         informAboutPreparedMeals();
-    }
-
-    private void informAboutPreparedMeals() {
-        List<MealRequest> preparedRequests = new ArrayList<>();
-
-        RTIambassador rtiAmbassador = getRTIAmbassador();
-
-        double federationTime = getFederateAmbassador().getFederateTime();
-
-        for (MealRequest mealRequest : mealsRequests) {
-            if (mealRequest.getReadyAt() <= federationTime) {
-                try {
-                    Meal meal = mealRequest.getMeal();
-
-                    Client client = meal.getClient();
-
-                    PreparedMealRequest preparedMealRequest = new PreparedMealRequest(rtiAmbassador, client, meal);
-
-                    preparedMealRequest.sendInteraction();
-
-                    preparedRequests.add(mealRequest);
-
-                    preparedMeals.add(meal);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-            }
-        }
-
-        if (preparedRequests.size() > 0) {
-            mealsRequests.removeAll(preparedRequests);
-        }
     }
 
     @Override
