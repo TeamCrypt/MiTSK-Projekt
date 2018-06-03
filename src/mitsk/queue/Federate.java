@@ -74,6 +74,7 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL()
         };

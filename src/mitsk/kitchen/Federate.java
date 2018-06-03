@@ -1,49 +1,22 @@
-package mitsk.clients;
+package mitsk.kitchen;
 
-import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
-import mitsk.clients.interaction.NewClient;
-import mitsk.clients.object.Client;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Random;
 
 public class Federate extends AbstractFederate {
-    private static final double A = 1.0;
-
-    private static final double B = 10.0;
-
     private static final int ITERATIONS = 20;
-
-    private HashMap<Long, Client> clients = new HashMap<>();
-
-    private Random random = new Random();
 
     public Federate(String federationName) throws Exception {
         super(federationName);
     }
 
     @Override
-    protected AbstractFederateAmbassador createAmbassador() {
+    protected AbstractFederateAmbassador createAmbassador() throws Exception {
         return new Ambassador(this);
-    }
-
-    private void createNewClient() {
-        try {
-            RTIambassador rtiAmbassador = getRTIAmbassador();
-
-            Client client = new Client(rtiAmbassador);
-
-            new NewClient(rtiAmbassador, client).sendInteraction();
-
-            clients.put(client.getIdentificationNumber(), client);
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
     }
 
     @Override
@@ -59,7 +32,7 @@ public class Federate extends AbstractFederate {
     @Override
     protected URL[] getJoinModules() throws MalformedURLException {
         return new URL[]{
-            (new File("foms/Clients.xml")).toURI().toURL()
+            (new File("foms/Kitchen.xml")).toURI().toURL()
         };
     }
 
@@ -75,17 +48,7 @@ public class Federate extends AbstractFederate {
 
     @Override
     protected void publish() throws Exception {
-        RTIambassador rtiAmbassador = getRTIAmbassador();
-
-//        rtiAmbassador.publishObjectClassAttributes(rtiAmbassador.getObjectClassHandle("HLAobjectRoot.Client"), rtiAmbassador.getAttributeHandleSetFactory().create()); // @TODO
-
-        rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient"));
-    }
-
-    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
-        double value = (random.nextDouble() * (b - a)) + a;
-
-        return Math.round(value);
+        // empty
     }
 
     @Override
@@ -93,18 +56,12 @@ public class Federate extends AbstractFederate {
         super.run();
 
         for (int i = 0; i < ITERATIONS; i++) {
-            sendInteraction();
-
-            advanceTime(randomDouble(A, B));
+            advanceTime(1.0);
 
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }
 
         resignFederation();
-    }
-
-    private void sendInteraction() {
-        createNewClient();
     }
 
     @Override
