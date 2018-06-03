@@ -34,7 +34,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 federate.addMealRequest(clientId.getValue(), mealId.getValue());
 
-                log("Received client");
+                log("Received request for meal with id " + mealId.getValue() + " for client with id " + clientId.getValue());
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
