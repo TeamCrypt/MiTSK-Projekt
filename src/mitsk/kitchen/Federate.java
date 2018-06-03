@@ -1,5 +1,8 @@
 package mitsk.kitchen;
 
+import hla.rti1516e.InteractionClassHandle;
+import hla.rti1516e.ParameterHandle;
+import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 
@@ -9,6 +12,12 @@ import java.net.URL;
 
 public class Federate extends AbstractFederate {
     private static final int ITERATIONS = 20;
+
+    private InteractionClassHandle newMealRequestInteractionClassHandle;
+
+    private ParameterHandle newMealRequestInteractionClassClientIdParameterHandle;
+
+    private ParameterHandle newMealRequestInteractionClassMealIdParameterHandle;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -66,6 +75,16 @@ public class Federate extends AbstractFederate {
 
     @Override
     protected void subscribe() throws Exception {
-        // empty
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        { // NewMealRequest
+            newMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewMealRequest");
+
+            rtiAmbassador.publishInteractionClass(newMealRequestInteractionClassHandle);
+
+            newMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "clientId");
+
+            newMealRequestInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "mealId");
+        }
     }
 }
