@@ -5,6 +5,7 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.kitchen.interaction.PreparedMealRequest;
 import mitsk.kitchen.object.Client;
 import mitsk.kitchen.object.Meal;
 import mitsk.kitchen.object.MealRequest;
@@ -31,6 +32,8 @@ public class Federate extends AbstractFederate {
 
     private List<MealRequest> mealsRequests = new ArrayList<>();
 
+    private List<Meal> preparedMeals = new ArrayList<>();
+
     private Random random = new Random();
 
     public Federate(String federationName) throws Exception {
@@ -40,8 +43,10 @@ public class Federate extends AbstractFederate {
     void addMealRequest(Long clientId, Long mealId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
+        double federationTime = getFederateAmbassador().getFederateTime();
+
         try {
-            mealsRequests.add(new MealRequest(rtiAmbassador, new Client(rtiAmbassador, clientId), new Meal(rtiAmbassador, mealId), randomDouble(A, B)));
+            mealsRequests.add(new MealRequest(rtiAmbassador, new Meal(rtiAmbassador, mealId, new Client(rtiAmbassador, clientId)), federationTime + randomDouble(A, B)));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -93,7 +98,9 @@ public class Federate extends AbstractFederate {
 
     @Override
     protected void publish() throws Exception {
-        // empty
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest"));
     }
 
     private double randomDouble(double a, double b) { // Generates random double in range [a, b]
@@ -107,12 +114,50 @@ public class Federate extends AbstractFederate {
         super.run();
 
         for (int i = 0; i < ITERATIONS; i++) {
+            sendInteraction();
+
             advanceTime(1.0);
 
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }
 
         resignFederation();
+    }
+
+    private void sendInteraction() {
+        informAboutPreparedMeals();
+    }
+
+    private void informAboutPreparedMeals() {
+        List<MealRequest> preparedRequests = new ArrayList<>();
+
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        double federationTime = getFederateAmbassador().getFederateTime();
+
+        for (MealRequest mealRequest : mealsRequests) {
+            if (mealRequest.getReadyAt() <= federationTime) {
+                try {
+                    Meal meal = mealRequest.getMeal();
+
+                    Client client = meal.getClient();
+
+                    PreparedMealRequest preparedMealRequest = new PreparedMealRequest(rtiAmbassador, client, meal);
+
+                    preparedMealRequest.sendInteraction();
+
+                    preparedRequests.add(mealRequest);
+
+                    preparedMeals.add(meal);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+
+        if (preparedRequests.size() > 0) {
+            mealsRequests.removeAll(preparedRequests);
+        }
     }
 
     @Override

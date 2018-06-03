@@ -4,20 +4,16 @@ import hla.rti1516e.RTIambassador;
 import mitsk.AbstractObject;
 
 public class MealRequest extends AbstractObject {
-    private Client client;
-
     private Meal meal;
 
-    private double preparationTime;
+    private double readyAt;
 
-    public MealRequest(RTIambassador rtiAmbassador, Client client, Meal meal, double preparationTime) throws Exception {
+    public MealRequest(RTIambassador rtiAmbassador, Meal meal, double readyAt) throws Exception {
         super(rtiAmbassador);
-
-        this.client = client;
 
         this.meal = meal;
 
-        this.preparationTime = preparationTime;
+        this.readyAt = readyAt;
     }
 
     @Override
@@ -25,16 +21,12 @@ public class MealRequest extends AbstractObject {
         // empty
     }
 
-    public Client getClient() {
-        return client;
-    }
-
     public Meal getMeal() {
         return meal;
     }
 
-    public double getPreparationTime() {
-        return preparationTime;
+    public double getReadyAt() {
+        return readyAt;
     }
 
     @Override
