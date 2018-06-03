@@ -19,6 +19,7 @@
 * `foms/` - zawiera modele FOM.
 * `src/` - zawiera pliki źródłowe aplikacji.
     * `clients/` - pakiet federatu klientów.
+    * `kitchen/` - pakiet federatu kuchni.
     * `queue/` - pakiet federatu kolejki.
     * `statistics/` - pakiet federatu statystyk.
 
