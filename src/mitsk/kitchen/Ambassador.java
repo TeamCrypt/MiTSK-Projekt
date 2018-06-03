@@ -38,6 +38,22 @@ public class Ambassador extends AbstractFederateAmbassador {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        } else if (interactionClass.equals(federate.getTakeFoodInteractionClassHandle())) {
+            try {
+                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                clientId.decode(theParameters.get(federate.getTakeFoodInteractionClassClientIdParameterHandle()));
+
+                HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
+
+                mealId.decode(theParameters.get(federate.getTakeFoodInteractionClassMealIdParameterHandle()));
+
+                if (federate.removePreparedFood(clientId.getValue(), mealId.getValue())) {
+                    log("Food with id " + mealId.getValue() + " for client " + clientId.getValue() + " was taken");
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }

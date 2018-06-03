@@ -36,6 +36,12 @@ public class Federate extends AbstractFederate {
 
     private Random random = new Random();
 
+    private InteractionClassHandle takeFoodInteractionClassHandle;
+
+    private ParameterHandle takeFoodInteractionClassClientIdParameterHandle;
+
+    private ParameterHandle takeFoodInteractionClassMealIdParameterHandle;
+
     public Federate(String federationName) throws Exception {
         super(federationName);
     }
@@ -86,6 +92,18 @@ public class Federate extends AbstractFederate {
         return newMealRequestInteractionClassMealIdParameterHandle;
     }
 
+    public InteractionClassHandle getTakeFoodInteractionClassHandle() {
+        return takeFoodInteractionClassHandle;
+    }
+
+    public ParameterHandle getTakeFoodInteractionClassClientIdParameterHandle() {
+        return takeFoodInteractionClassClientIdParameterHandle;
+    }
+
+    public ParameterHandle getTakeFoodInteractionClassMealIdParameterHandle() {
+        return takeFoodInteractionClassMealIdParameterHandle;
+    }
+
     public static void main(String[] args) {
         String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
 
@@ -107,6 +125,22 @@ public class Federate extends AbstractFederate {
         double value = (random.nextDouble() * (b - a)) + a;
 
         return Math.round(value);
+    }
+
+    boolean removePreparedFood(Long clientId, Long mealId) {
+        Meal toRemove = null;
+
+        for (Meal meal : preparedMeals) {
+            if (meal.getIdentificationNumber().equals(mealId) && meal.getClient().getIdentificationNumber().equals(clientId)) {
+                toRemove = meal;
+            }
+        }
+
+        if (toRemove != null) {
+            preparedMeals.remove(toRemove);
+        }
+
+        return toRemove != null;
     }
 
     @Override
@@ -172,6 +206,16 @@ public class Federate extends AbstractFederate {
             newMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "clientId");
 
             newMealRequestInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "mealId");
+        }
+
+        { // TakeFood
+            takeFoodInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("TakeFood");
+
+            rtiAmbassador.publishInteractionClass(takeFoodInteractionClassHandle);
+
+            takeFoodInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(takeFoodInteractionClassHandle, "clientId");
+
+            takeFoodInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(takeFoodInteractionClassHandle, "mealId");
         }
     }
 }
