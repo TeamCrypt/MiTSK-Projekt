@@ -80,27 +80,27 @@ public class Federate extends AbstractFederate {
         };
     }
 
-    public InteractionClassHandle getNewMealRequestInteractionClassHandle() {
+    InteractionClassHandle getNewMealRequestInteractionClassHandle() {
         return newMealRequestInteractionClassHandle;
     }
 
-    public ParameterHandle getNewMealRequestInteractionClassClientIdParameterHandle() {
+    ParameterHandle getNewMealRequestInteractionClassClientIdParameterHandle() {
         return newMealRequestInteractionClassClientIdParameterHandle;
     }
 
-    public ParameterHandle getNewMealRequestInteractionClassMealIdParameterHandle() {
+    ParameterHandle getNewMealRequestInteractionClassMealIdParameterHandle() {
         return newMealRequestInteractionClassMealIdParameterHandle;
     }
 
-    public InteractionClassHandle getTakeFoodInteractionClassHandle() {
+    InteractionClassHandle getTakeFoodInteractionClassHandle() {
         return takeFoodInteractionClassHandle;
     }
 
-    public ParameterHandle getTakeFoodInteractionClassClientIdParameterHandle() {
+    ParameterHandle getTakeFoodInteractionClassClientIdParameterHandle() {
         return takeFoodInteractionClassClientIdParameterHandle;
     }
 
-    public ParameterHandle getTakeFoodInteractionClassMealIdParameterHandle() {
+    ParameterHandle getTakeFoodInteractionClassMealIdParameterHandle() {
         return takeFoodInteractionClassMealIdParameterHandle;
     }
 
