@@ -31,14 +31,16 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle clientLeavesTableInteractionClassTableIdParameterHandle;
 
+    private static final int amountOfTables = 3;
 
-    public Federate(String federationName, int size) throws Exception {
+
+    public Federate(String federationName) throws Exception {
         super(federationName);
 
-        if (size >= 1) {
-            tables = new ArrayList<>(size);
-        } else
-            tables = new ArrayList<>(3);
+        if (amountOfTables >= 1) {
+            tables = new ArrayList<>(amountOfTables);
+        } else throw new IllegalArgumentException();
+
     }
 
     void clientTakesTable(Table table, Client client) {
@@ -77,7 +79,7 @@ public class Federate extends AbstractFederate {
         String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
 
         try {
-            new Federate(federationName, 3).run();
+            new Federate(federationName).run();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
