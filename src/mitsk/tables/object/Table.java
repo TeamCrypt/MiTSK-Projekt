@@ -1,24 +1,23 @@
 package mitsk.tables.object;
 
+import hla.rti1516e.ObjectClassHandle;
+import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractObject;
 
 public class Table extends AbstractObject {
-    private boolean isFree;
-
     private Long tableId;
 
-    private Client client;
+    private Client client = null;
 
     private static Long nextTableId = 0L;
+
+    private ObjectClassHandle tableObjectClassHandle;
+
 
 
     Table(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
-
-        this.isFree = true;
-
-        this.client = null;
 
         this.tableId = nextTableId;
 
@@ -26,19 +25,15 @@ public class Table extends AbstractObject {
     }
 
     public void setFree() {
-        this.isFree = true;
-
         this.client = null;
     }
 
     public void setOccupied(Client client) {
-        this.isFree = false;
-
         this.client = client;
     }
 
     public boolean isFree() {
-        return this.isFree;
+        return this.client == null;
     }
 
     public Long getTableId() { return this.tableId; }
@@ -52,6 +47,6 @@ public class Table extends AbstractObject {
 
     @Override
     protected void setHandles() throws Exception {
-        // empty
+        tableObjectClassHandle = getRtiAmbassador().getObjectClassHandle("HLAObjectRoot.Table");
     }
 }
