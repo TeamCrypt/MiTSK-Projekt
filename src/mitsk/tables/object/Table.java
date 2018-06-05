@@ -1,5 +1,6 @@
 package mitsk.tables.object;
 
+import hla.rti1516e.AttributeHandle;
 import hla.rti1516e.ObjectClassHandle;
 import hla.rti1516e.ObjectInstanceHandle;
 import hla.rti1516e.RTIambassador;
@@ -14,6 +15,7 @@ public class Table extends AbstractObject {
 
     private ObjectClassHandle tableObjectClassHandle;
 
+    private AttributeHandle isFreeAttributeClassHandle;
 
 
     Table(RTIambassador rtiAmbassador) throws Exception {
@@ -22,7 +24,9 @@ public class Table extends AbstractObject {
         this.tableId = nextTableId;
 
         nextTableId++;
-    }
+
+        this.setHandles();
+        }
 
     public void setFree() {
         this.client = null;
@@ -48,5 +52,7 @@ public class Table extends AbstractObject {
     @Override
     protected void setHandles() throws Exception {
         tableObjectClassHandle = getRtiAmbassador().getObjectClassHandle("HLAObjectRoot.Table");
+
+        isFreeAttributeClassHandle = getRtiAmbassador().getAttributeHandle(tableObjectClassHandle, "IsFree");
     }
 }
