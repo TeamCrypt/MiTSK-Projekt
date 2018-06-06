@@ -15,9 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Federate extends AbstractFederate {
+    private static final int ITERATIONS = 20;
+
+    private static final int NUMBER_OF_TABLES = 3;
+
     private List<Table> tables;
 
-    private static final int ITERATIONS = 20;
+    private int numberOfTables = NUMBER_OF_TABLES;
 
     private InteractionClassHandle clientTakesTableInteractionClassHandle;
 
@@ -31,16 +35,20 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle clientLeavesTableInteractionClassTableIdParameterHandle;
 
-    private static final int amountOfTables = 3;
-
-
     public Federate(String federationName) throws Exception {
         super(federationName);
 
-        if (amountOfTables >= 1) {
-            tables = new ArrayList<>(amountOfTables);
-        } else throw new IllegalArgumentException();
+        tables = new ArrayList<>(numberOfTables);
+    }
 
+    public Federate(String federationName, int numberOfTables) throws Exception {
+        this(federationName);
+
+        if (numberOfTables < 0) {
+            throw new IllegalArgumentException("Number of tables must be positive value");
+        }
+
+        this.numberOfTables = numberOfTables;
     }
 
     void clientTakesTable(Table table, Client client) {
@@ -59,18 +67,18 @@ public class Federate extends AbstractFederate {
     @Override
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
-                (new File("foms/Clients.xml")).toURI().toURL(),
-                (new File("foms/Kitchen.xml")).toURI().toURL(),
-                (new File("foms/Queue.xml")).toURI().toURL(),
-                (new File("foms/Statistics.xml")).toURI().toURL(),
-                (new File("foms/Tables.xml")).toURI().toURL()
+            (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Kitchen.xml")).toURI().toURL(),
+            (new File("foms/Queue.xml")).toURI().toURL(),
+            (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL()
         };
     }
 
     @Override
     protected URL[] getJoinModules() throws MalformedURLException {
         return new URL[]{
-                (new File("foms/Tables.xml")).toURI().toURL()
+            (new File("foms/Tables.xml")).toURI().toURL()
         };
     }
 
