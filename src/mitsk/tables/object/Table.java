@@ -16,7 +16,7 @@ public class Table extends AbstractObject {
 
     private AttributeHandle isFreeAttributeClassHandle;
 
-    Table(RTIambassador rtiAmbassador) throws Exception {
+    public Table(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
 
         tableId = nextTableId++;
@@ -51,6 +51,6 @@ public class Table extends AbstractObject {
     protected void setHandles() throws Exception {
         tableObjectClassHandle = getRtiAmbassador().getObjectClassHandle("HLAObjectRoot.Table");
 
-        isFreeAttributeClassHandle = getRtiAmbassador().getAttributeHandle(tableObjectClassHandle, "IsFree");
+//        isFreeAttributeClassHandle = getRtiAmbassador().getAttributeHandle(tableObjectClassHandle, "IsFree"); // @TODO hla.rti1516e.exceptions.NameNotFound: name: IsFree
     }
 }

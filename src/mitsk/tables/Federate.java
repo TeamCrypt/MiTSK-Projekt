@@ -36,19 +36,27 @@ public class Federate extends AbstractFederate {
     private ParameterHandle clientLeavesTableInteractionClassTableIdParameterHandle;
 
     public Federate(String federationName) throws Exception {
-        super(federationName);
-
-        tables = new ArrayList<>(numberOfTables);
+        this(federationName, NUMBER_OF_TABLES);
     }
 
     public Federate(String federationName, int numberOfTables) throws Exception {
-        this(federationName);
+        super(federationName);
 
         if (numberOfTables < 0) {
             throw new IllegalArgumentException("Number of tables must be positive value");
         }
 
         this.numberOfTables = numberOfTables;
+
+        createTablesList();
+    }
+
+    private void createTablesList() throws Exception {
+        tables = new ArrayList<>(numberOfTables);
+
+        for (int i = 0; i < numberOfTables; ++i) {
+            tables.add(i, new Table(getRTIAmbassador()));
+        }
     }
 
     void clientTakesTable(Table table, Client client) {
@@ -100,6 +108,15 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable"));
 
         rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable"));
+    }
+
+    @Override
+    protected void resignFederation() throws Exception {
+        super.resignFederation();
+
+        for (Table table : tables) {
+            table.destruct();
+        }
     }
 
     @Override
