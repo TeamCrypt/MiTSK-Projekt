@@ -5,7 +5,9 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.waiters.interaction.StartingClientService;
 import mitsk.waiters.object.Client;
+import mitsk.waiters.object.ClientService;
 import mitsk.waiters.object.Waiter;
 import mitsk.waiters.object.WaiterRequest;
 
@@ -49,6 +51,8 @@ public class Federate extends AbstractFederate {
     private ParameterHandle endingClientServiceInteractionClassClientIdParameterHandle;
 
     private List<WaiterRequest> waiterRequests = new ArrayList<>();
+
+    private List<ClientService> clientsOrders = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_WAITERS);
@@ -128,6 +132,62 @@ public class Federate extends AbstractFederate {
         }
     }
 
+    private boolean ifIsFreeWaiter() {
+        for (Waiter waiter : waiters) {
+            if(waiter.ifFree()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Waiter getFirstFreeWaiter() {
+        for (Waiter waiter : waiters) {
+            if(waiter.ifFree()) {
+                return waiter;
+            }
+        }
+
+        return null;
+    }
+
+    protected void informAboutStartedClientServices() {
+        List<WaiterRequest> consideredWaiterRequests = new ArrayList<>();
+
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        for (WaiterRequest waiterRequest : waiterRequests) {
+            if(ifIsFreeWaiter()) {
+                try {
+                    Client client = waiterRequest.getClient();
+
+                    Waiter waiter = getFirstFreeWaiter();
+
+                    waiter.setOccupied();
+
+                    ClientService clientOrder = new ClientService(rtiAmbassador, client, waiter);
+
+                    clientsOrders.add(clientOrder);
+
+                    StartingClientService startingClientService = new StartingClientService(rtiAmbassador, client);
+
+                    startingClientService.sendInteraction();
+
+                    consideredWaiterRequests.add(waiterRequest);
+
+                    log("Started client service for client with id " + client.getIdentificationNumber());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (consideredWaiterRequests.size() > 0) {
+            waiterRequests.removeAll(consideredWaiterRequests);
+        }
+    }
+
     @Override
     protected AbstractFederateAmbassador createAmbassador() throws Exception {
         return new Ambassador(this);
@@ -187,7 +247,9 @@ public class Federate extends AbstractFederate {
         resignFederation();
     }
 
-    public void sendInteraction() {}
+    public void sendInteraction() {
+        informAboutStartedClientServices();
+    }
 
     @Override
     protected void subscribe() throws Exception {
