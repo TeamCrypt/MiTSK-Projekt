@@ -16,6 +16,8 @@ public class Table extends AbstractObject {
 
     private AttributeHandle isFreeAttributeClassHandle;
 
+    protected double freeAt;
+
     public Table(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
 
@@ -26,8 +28,10 @@ public class Table extends AbstractObject {
         client = null;
     }
 
-    public void setOccupied(Client client) {
+    public void setOccupied(Client client, double freeAt) {
         this.client = client;
+
+        this.freeAt = freeAt;
     }
 
     public boolean isFree() {
@@ -40,6 +44,10 @@ public class Table extends AbstractObject {
 
     public Client getClient() {
         return client;
+    }
+
+    public double getFreeAt() {
+        return freeAt;
     }
 
     @Override
