@@ -5,13 +5,22 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.waiters.object.Waiter;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Federate extends AbstractFederate {
     private static final int ITERATIONS = 20;
+
+    private static final int NUMBER_OF_WAITERS = 3;
+
+    private int numberOfWaiters = NUMBER_OF_WAITERS;
+
+    protected List<Waiter> waiters;
 
     private InteractionClassHandle clientCallsWaiterInteractionClassHandle;
 
@@ -38,7 +47,23 @@ public class Federate extends AbstractFederate {
     private ParameterHandle endingClientServiceInteractionClassClientIdParameterHandle;
 
     public Federate(String federationName) throws Exception {
+        this(federationName, NUMBER_OF_WAITERS);
+    }
+
+    public Federate(String federationName, int numberOfWaiters) throws Exception {
         super(federationName);
+
+        if (numberOfWaiters <= 0) {
+            throw new IllegalArgumentException("Number of waiters must be positive value");
+        }
+
+        this.numberOfWaiters = numberOfWaiters;
+
+        waiters = new ArrayList<>(numberOfWaiters);
+
+        for (int i = 0; i < numberOfWaiters; ++i) {
+            waiters.add(new Waiter(getRTIAmbassador()));
+        }
     }
 
     public InteractionClassHandle getClientCallsWaiterInteractionClassHandle() {

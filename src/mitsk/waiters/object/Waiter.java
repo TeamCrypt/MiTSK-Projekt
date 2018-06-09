@@ -6,12 +6,14 @@ import mitsk.AbstractObject;
 public class Waiter extends AbstractObject {
     private Long identificationNumber;
 
+    private static Long nextWaiterId = 0L;
+
     private boolean ifFree = true;
 
-    public Waiter(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
+    public Waiter(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
 
-        this.identificationNumber = identificationNumber;
+        identificationNumber = nextWaiterId++;
     }
 
     @Override
