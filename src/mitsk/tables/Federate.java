@@ -19,7 +19,7 @@ public class Federate extends AbstractFederate {
 
     private static final int NUMBER_OF_TABLES = 3;
 
-    private List<Table> tables;
+    protected List<Table> tables;
 
     private int numberOfTables = NUMBER_OF_TABLES;
 
@@ -189,6 +189,16 @@ public class Federate extends AbstractFederate {
 
     }
 
+    public void assignClientToEmptyTable(Long clientId) throws Exception {
+        Client client = new Client(getRTIAmbassador(), clientId);
+
+        for (Table table : tables) {
+            if (table.isFree()) {
+                table.setOccupied(client);
+                return;
+            }
+        }
+    }
 
 
     @Override
