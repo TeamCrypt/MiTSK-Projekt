@@ -153,5 +153,44 @@ public class Federate extends AbstractFederate {
     @Override
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        // ClientCallsWaiter
+        clientCallsWaiterInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
+
+        rtiAmbassador.subscribeInteractionClass(clientCallsWaiterInteractionClassHandle);
+
+        clientCallsWaiterInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientCallsWaiterInteractionClassHandle, "clientId");
+
+        // ClientOrdersMeal
+        clientOrdersMealInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
+
+        rtiAmbassador.subscribeInteractionClass(clientOrdersMealInteractionClassHandle);
+
+        clientOrdersMealInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "clientId");
+
+        clientOrdersMealInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "mealId");
+
+        // PreparedMealRequest
+        preparedMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest");
+
+        rtiAmbassador.subscribeInteractionClass(preparedMealRequestInteractionClassHandle);
+
+        preparedMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "clientId");
+
+        preparedMealRequestInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "mealId");
+
+        // ClientAsksForBill
+        clientAsksForBillInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
+
+        rtiAmbassador.subscribeInteractionClass(clientAsksForBillInteractionClassHandle);
+
+        clientAsksForBillInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientAsksForBillInteractionClassHandle, "clientId");
+
+        // EndingClientService
+        endingClientServiceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
+
+        rtiAmbassador.subscribeInteractionClass(endingClientServiceInteractionClassHandle);
+
+        endingClientServiceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(endingClientServiceInteractionClassHandle, "clientId");
     }
 }
