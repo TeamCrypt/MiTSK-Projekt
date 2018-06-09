@@ -219,7 +219,7 @@ public class Federate extends AbstractFederate {
         double federationTime = getFederateAmbassador().getFederateTime();
 
         for (Table table : tables) {
-            if(table.getFreeAt() <= federationTime) {
+            if(table.getFreeAt() <= federationTime && !table.isFree()) {
                 try {
                     table.setFree();
 

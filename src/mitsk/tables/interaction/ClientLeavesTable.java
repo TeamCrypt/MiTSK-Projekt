@@ -11,7 +11,7 @@ public class ClientLeavesTable extends AbstractInteraction {
     private EncoderFactory encoderFactory;
 
     private Table table;
-    
+
     private InteractionClassHandle clientLeavesTableInteractionClassHandle;
 
     private ParameterHandle clientLeavesTableInteractionClassClientIdParameterHandle;
