@@ -6,10 +6,7 @@ import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 import mitsk.waiters.interaction.StartingClientService;
-import mitsk.waiters.object.Client;
-import mitsk.waiters.object.ClientService;
-import mitsk.waiters.object.Waiter;
-import mitsk.waiters.object.WaiterRequest;
+import mitsk.waiters.object.*;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -185,6 +182,30 @@ public class Federate extends AbstractFederate {
 
         if (consideredWaiterRequests.size() > 0) {
             waiterRequests.removeAll(consideredWaiterRequests);
+        }
+    }
+
+    private ClientService findOrder(Long clientId) {
+        for (ClientService clientService : clientsOrders) {
+            if((!clientService.ifDone()) && (clientService.getClient().getIdentificationNumber() == clientId)) {
+                return clientService;
+            }
+        }
+
+        return null;
+    }
+
+    protected void addMealToOrder(Long clientId, Long mealId) {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        ClientService clientService = findOrder(clientId);
+
+        try {
+            Meal meal = new Meal(rtiAmbassador, mealId);
+
+            clientService.setMeal(meal);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
