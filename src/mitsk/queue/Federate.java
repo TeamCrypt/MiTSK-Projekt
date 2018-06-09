@@ -2,12 +2,15 @@ package mitsk.queue;
 
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ParameterHandle;
+import hla.rti1516e.ParameterHandleValueMap;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 import mitsk.queue.interaction.ClientImpatience;
+import mitsk.queue.interaction.LeaveFromQueue;
 import mitsk.queue.interaction.NewInQueue;
 import mitsk.queue.object.Client;
+import mitsk.tables.interaction.FreeTablesAvailable;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -27,11 +30,19 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle newClientInteractionClassClientIdParameterHandle;
 
+    private InteractionClassHandle freeTablesAvailableInteractionClassHandle;
+
+    private InteractionClassHandle leaveFromQueueInteractionClassHandle;
+
+    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
+
     private List<Client> newInQueue = new ArrayList<>();
 
     private List<Client> queue = new ArrayList<>();
 
     private Random random = new Random();
+
+    protected boolean permissionToSendClient = false;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -76,7 +87,8 @@ public class Federate extends AbstractFederate {
             (new File("foms/Clients.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
-            (new File("foms/Statistics.xml")).toURI().toURL()
+            (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL()
         };
     }
 
@@ -93,6 +105,10 @@ public class Federate extends AbstractFederate {
 
     ParameterHandle getNewClientInteractionClassClientIdParameterHandle() {
         return newClientInteractionClassClientIdParameterHandle;
+    }
+
+    InteractionClassHandle getFreeTablesAvailableInteractionClassHandle() {
+        return freeTablesAvailableInteractionClassHandle;
     }
 
     public static void main(String[] args) {
@@ -112,6 +128,11 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue"));
 
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience"));
+
+        leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+
+        leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
+
     }
 
     private double randomDouble(double a, double b) { // Generates random double in range [a, b]
@@ -142,6 +163,23 @@ public class Federate extends AbstractFederate {
         }
     }
 
+    private void leaveFromQueue() {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        if (permissionToSendClient && !queue.isEmpty()) {
+            try {
+                Client client = queue.remove(0);
+
+                LeaveFromQueue leaveFromQueue = new LeaveFromQueue(rtiAmbassador, client);
+
+                leaveFromQueue.sendInteraction();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            permissionToSendClient = false;
+        }
+    }
+
     @Override
     public void run() throws Exception {
         super.run();
@@ -157,11 +195,13 @@ public class Federate extends AbstractFederate {
         resignFederation();
     }
 
-    private void sendInteraction() {
+    private void sendInteraction() throws Exception {
         addClientsToQueue();
 
         removeImpatientClients();
-    }
+
+        leaveFromQueue();
+        }
 
     @Override
     protected void subscribe() throws Exception {
@@ -172,5 +212,9 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.subscribeInteractionClass(newClientInteractionClassHandle);
 
         newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
+
+        freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
+
+        rtiAmbassador.subscribeInteractionClass(freeTablesAvailableInteractionClassHandle);
     }
 }

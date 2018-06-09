@@ -47,6 +47,8 @@ public class ClientTakesTable extends AbstractInteraction {
 
             parameters.put(clientTakesTableInteractionClassTableIdParameterHandle, tableId.toByteArray());
         }
+
+        rtiAmbassador.sendInteraction(clientTakesTableInteractionClassHandle, parameters, generateTag());
     }
 
     @Override

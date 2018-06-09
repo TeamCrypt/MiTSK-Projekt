@@ -52,7 +52,9 @@ public class Federate extends AbstractFederate {
             (new File("foms/Clients.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
-            (new File("foms/Statistics.xml")).toURI().toURL()
+            (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL()
+
         };
     }
 

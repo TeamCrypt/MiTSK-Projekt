@@ -1,13 +1,11 @@
 package mitsk.tables;
 
 import hla.rti1516e.*;
-import hla.rti1516e.encoding.DecoderException;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAinteger64BE;
 import hla.rti1516e.exceptions.FederateInternalError;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
-import mitsk.tables.object.Table;
 
 public class Ambassador extends AbstractFederateAmbassador {
     private EncoderFactory encoderFactory;
@@ -28,14 +26,14 @@ public class Ambassador extends AbstractFederateAmbassador {
             try {
                 HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                clientId.decode(theParameters.get(federate.getClientLeavesTableInteractionClassClientIdParameterHandle()));
+                clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
 
                 federate.addClientReceived(clientId.getValue());
 
-                log("Received Client " + clientId.getValue() + " leaves queue to go into Restaurant");
+                log("Client left queue to go into Tables");
 
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
         }
     }

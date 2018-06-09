@@ -51,6 +51,8 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
+    private InteractionClassHandle freeTablesAvailableInteractionClassHandle;
+
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_TABLES);
     }
@@ -96,7 +98,11 @@ public class Federate extends AbstractFederate {
     }
 
     ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
-        return getClientLeavesTableInteractionClassClientIdParameterHandle();
+        return leaveFromQueueInteractionClassClientIdParameterHandle;
+    }
+
+    InteractionClassHandle getFreeTablesAvailableInteractionClassHandle() {
+        return getFreeTablesAvailableInteractionClassHandle();
     }
 
     private void createTablesList() throws Exception {
@@ -163,6 +169,11 @@ public class Federate extends AbstractFederate {
 
         clientLeavesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
 
+        // FreeTablesAvailable
+
+        freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
+
+        rtiAmbassador.publishInteractionClass(freeTablesAvailableInteractionClassHandle);
     }
 
     @Override
@@ -191,14 +202,17 @@ public class Federate extends AbstractFederate {
 
     public void sendInteraction() {
         clientLeavesTable();
+
         freeTablesAvailable();
+
+        clientTakesTable();
     }
 
     public void addClientReceived(Long clientId) throws Exception {
         clientsReceived.add(new Client(getRTIAmbassador(), clientId));
     }
 
-    public void clientTakesTable(Long clientId) throws Exception {
+    public void clientTakesTable() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         double freeAfter =  randomDouble(A, B);
@@ -250,6 +264,7 @@ public class Federate extends AbstractFederate {
                     FreeTablesAvailable freeTablesAvailable = new FreeTablesAvailable(getRTIAmbassador());
 
                     freeTablesAvailable.sendInteraction();
+
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }

@@ -34,6 +34,10 @@ public class Ambassador extends AbstractFederateAmbassador {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        } else if (interactionClass.equals((federate.getFreeTablesAvailableInteractionClassHandle()))) {
+            federate.permissionToSendClient = true;
+
+            log("Received permission to send Client");
         }
     }
 }

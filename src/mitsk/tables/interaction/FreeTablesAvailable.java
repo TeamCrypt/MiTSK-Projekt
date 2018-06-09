@@ -27,6 +27,10 @@ public class FreeTablesAvailable extends AbstractInteraction {
     protected void setHandles() throws Exception {
         RTIambassador rtiAmbassador = getRtiAmbassador();
 
+        ParameterHandleValueMap parameters = rtiAmbassador.getParameterHandleValueMapFactory().create(0);
+
         freeTableAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
+
+        rtiAmbassador.sendInteraction(freeTableAvailableInteractionClassHandle, parameters, generateTag());
     }
 }

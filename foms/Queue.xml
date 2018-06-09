@@ -75,7 +75,7 @@
                 <order>TimeStamp</order>
             </interactionClass>
             <interactionClass>
-                <name>FreeTableShouts</name>
+                <name>FreeTablesAvailable</name>
                 <sharing>PublishSubscribe</sharing>
                 <transportation>HLAreliable</transportation>
                 <order>TimeStamp</order>
