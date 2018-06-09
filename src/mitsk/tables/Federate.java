@@ -28,6 +28,8 @@ public class Federate extends AbstractFederate {
 
     protected List<Table> tables;
 
+    protected List<Client> clientsReceived = new ArrayList<>();
+
     private int numberOfTables = NUMBER_OF_TABLES;
 
     private Random random = new Random();
@@ -190,25 +192,31 @@ public class Federate extends AbstractFederate {
         clientLeavesTable();
     }
 
+    public void addClientReceived(Long clientId) throws Exception {
+        clientsReceived.add(new Client(getRTIAmbassador(), clientId));
+    }
+
     public void clientTakesTable(Long clientId) throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        Client client = new Client(getRTIAmbassador(), clientId);
-
         double freeAfter =  randomDouble(A, B);
 
-        for (Table table : tables) {
-            if (table.isFree()) {
-                try {
-                    table.setOccupied(client, freeAfter);
+        for (Client client : clientsReceived) {
+            for (Table table : tables) {
+                if (table.isFree()) {
+                    try {
+                        table.setOccupied(client, freeAfter);
 
-                    ClientTakesTable clientTakesTable = new ClientTakesTable(rtiAmbassador, client, table);
+                        ClientTakesTable clientTakesTable = new ClientTakesTable(rtiAmbassador, client, table);
 
-                    clientTakesTable.sendInteraction();
-                }  catch (Exception exception) {
-                    exception.printStackTrace();
+                        clientTakesTable.sendInteraction();
+
+                        clientsReceived.remove(client);
+                    }  catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                    return;
                 }
-                return;
             }
         }
     }
