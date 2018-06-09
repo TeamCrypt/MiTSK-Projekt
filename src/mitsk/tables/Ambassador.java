@@ -30,7 +30,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 clientId.decode(theParameters.get(federate.getClientLeavesTableInteractionClassClientIdParameterHandle()));
 
-                federate.assignClientToEmptyTable(clientId.getValue());
+                federate.clientTakesTable(clientId.getValue());
 
                 log("Received Client " + clientId.getValue() + " leaves queue to go into Restaurant");
 
