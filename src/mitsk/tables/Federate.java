@@ -5,6 +5,8 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.tables.interaction.ClientLeavesTable;
+import mitsk.tables.interaction.ClientTakesTable;
 import mitsk.tables.object.Client;
 import mitsk.tables.object.Table;
 
@@ -13,15 +15,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Federate extends AbstractFederate {
     private static final int ITERATIONS = 20;
 
     private static final int NUMBER_OF_TABLES = 3;
 
+    private static final double A = 16.0;
+
+    private static final double B = 32.0;
+
     protected List<Table> tables;
 
     private int numberOfTables = NUMBER_OF_TABLES;
+
+    private Random random = new Random();
 
     private InteractionClassHandle clientTakesTableInteractionClassHandle;
 
@@ -93,14 +102,6 @@ public class Federate extends AbstractFederate {
         for (int i = 0; i < numberOfTables; ++i) {
             tables.add(i, new Table(getRTIAmbassador()));
         }
-    }
-
-    void clientTakesTable(Table table, Client client) {
-        table.setOccupied(client);
-    }
-
-    void clientLeavesTable(Table table) {
-        table.setFree();
     }
 
     @Override
@@ -186,20 +187,57 @@ public class Federate extends AbstractFederate {
     }
 
     public void sendInteraction() {
-
+        clientLeavesTable();
     }
 
-    public void assignClientToEmptyTable(Long clientId) throws Exception {
+    public void clientTakesTable(Long clientId) throws Exception {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
         Client client = new Client(getRTIAmbassador(), clientId);
+
+        double freeAfter =  randomDouble(A, B);
 
         for (Table table : tables) {
             if (table.isFree()) {
-                table.setOccupied(client);
+                try {
+                    table.setOccupied(client, freeAfter);
+
+                    ClientTakesTable clientTakesTable = new ClientTakesTable(rtiAmbassador, client, table);
+
+                    clientTakesTable.sendInteraction();
+                }  catch (Exception exception) {
+                    exception.printStackTrace();
+                }
                 return;
             }
         }
     }
 
+    public void clientLeavesTable() {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        double federationTime = getFederateAmbassador().getFederateTime();
+
+        for (Table table : tables) {
+            if(table.getFreeAt() <= federationTime) {
+                try {
+                    table.setFree();
+
+                    ClientLeavesTable clientLeavesTable = new ClientLeavesTable(rtiAmbassador, table);
+
+                    clientLeavesTable.sendInteraction();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
+        double value = (random.nextDouble() * (b - a)) + a;
+
+        return Math.round(value);
+    }
 
     @Override
     protected void subscribe() throws Exception {
