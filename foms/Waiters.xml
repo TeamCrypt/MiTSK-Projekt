@@ -33,60 +33,135 @@
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>NewMealRequest</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>TakeFood</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>GiveMeal</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>PaymentService</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientCallsWaiter</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientOrdersMeal</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>PreparedMealRequest</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientAsksForBill</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>EndingClientService</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 		</interactionClass>
 	</interactions>
