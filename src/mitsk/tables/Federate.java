@@ -35,6 +35,10 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle clientLeavesTableInteractionClassTableIdParameterHandle;
 
+    private InteractionClassHandle leaveFromQueueInteractionClassHandle;
+
+    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
+
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_TABLES);
     }
@@ -49,6 +53,30 @@ public class Federate extends AbstractFederate {
         this.numberOfTables = numberOfTables;
 
         createTablesList();
+    }
+
+    InteractionClassHandle getClientTakesTableInteractionClassHandle() {
+        return clientTakesTableInteractionClassHandle;
+    }
+
+    ParameterHandle getClientTakesTableInteractionClassClientIdParameterHandle() {
+        return clientTakesTableInteractionClassTableIdParameterHandle;
+    }
+
+    ParameterHandle getClientTakesTableInteractionClassTableIdParameterHandle() {
+        return clientTakesTableInteractionClassTableIdParameterHandle;
+    }
+
+    InteractionClassHandle getClientLeavesTableInteractionClassHandle() {
+        return clientLeavesTableInteractionClassHandle;
+    }
+
+    ParameterHandle getClientLeavesTableInteractionClassClientIdParameterHandle() {
+        return clientLeavesTableInteractionClassClientIdParameterHandle;
+    }
+
+    ParameterHandle getClientLeavesTableInteractionClassTableIdParameterHandle() {
+        return clientLeavesTableInteractionClassTableIdParameterHandle;
     }
 
     private void createTablesList() throws Exception {
@@ -105,9 +133,24 @@ public class Federate extends AbstractFederate {
     protected void publish() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable"));
+        // ClientTakesTable
+        clientTakesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable");
 
-        rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable"));
+        rtiAmbassador.publishInteractionClass(clientTakesTableInteractionClassHandle);
+
+        clientTakesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
+
+        clientTakesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+
+        // ClientLeavesTable
+        clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
+
+        rtiAmbassador.publishInteractionClass(clientLeavesTableInteractionClassHandle);
+
+        clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
+
+        clientLeavesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+
     }
 
     @Override
@@ -139,6 +182,12 @@ public class Federate extends AbstractFederate {
     @Override
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+
+        rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
+
+        leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
 
     }
 }
