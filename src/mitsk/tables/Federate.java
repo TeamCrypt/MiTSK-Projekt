@@ -79,6 +79,14 @@ public class Federate extends AbstractFederate {
         return clientLeavesTableInteractionClassTableIdParameterHandle;
     }
 
+    InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
+        return  leaveFromQueueInteractionClassHandle;
+    }
+
+    ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
+        return getClientLeavesTableInteractionClassClientIdParameterHandle();
+    }
+
     private void createTablesList() throws Exception {
         tables = new ArrayList<>(numberOfTables);
 
@@ -177,7 +185,11 @@ public class Federate extends AbstractFederate {
         resignFederation();
     }
 
-    public void sendInteraction() {}
+    public void sendInteraction() {
+
+    }
+
+
 
     @Override
     protected void subscribe() throws Exception {
