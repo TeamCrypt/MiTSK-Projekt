@@ -1,5 +1,7 @@
 package mitsk.waiters;
 
+import hla.rti1516e.InteractionClassHandle;
+import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
@@ -11,8 +13,80 @@ import java.net.URL;
 public class Federate extends AbstractFederate {
     private static final int ITERATIONS = 20;
 
+    private InteractionClassHandle clientCallsWaiterInteractionClassHandle;
+
+    private ParameterHandle clientCallsWaiterInteractionClassClientIdParameterHandle;
+
+    private InteractionClassHandle clientOrdersMealInteractionClassHandle;
+
+    private ParameterHandle clientOrdersMealInteractionClassClientIdParameterHandle;
+
+    private ParameterHandle clientOrdersMealInteractionClassMealIdParameterHandle;
+
+    private InteractionClassHandle preparedMealRequestInteractionClassHandle;
+
+    private ParameterHandle preparedMealRequestInteractionClassClientIdParameterHandle;
+
+    private ParameterHandle preparedMealRequestInteractionClassMealIdParameterHandle;
+
+    private InteractionClassHandle clientAsksForBillInteractionClassHandle;
+
+    private ParameterHandle clientAsksForBillInteractionClassClientIdParameterHandle;
+
+    private InteractionClassHandle endingClientServiceInteractionClassHandle;
+
+    private ParameterHandle endingClientServiceInteractionClassClientIdParameterHandle;
+
     public Federate(String federationName) throws Exception {
         super(federationName);
+    }
+
+    public InteractionClassHandle getClientCallsWaiterInteractionClassHandle() {
+        return clientCallsWaiterInteractionClassHandle;
+    }
+
+    public ParameterHandle getClientCallsWaiterInteractionClassClientIdParameterHandle() {
+        return clientCallsWaiterInteractionClassClientIdParameterHandle;
+    }
+
+    public InteractionClassHandle getClientOrdersMealInteractionClassHandle() {
+        return clientOrdersMealInteractionClassHandle;
+    }
+
+    public ParameterHandle getClientOrdersMealInteractionClassClientIdParameterHandle() {
+        return clientOrdersMealInteractionClassClientIdParameterHandle;
+    }
+
+    public ParameterHandle getClientOrdersMealInteractionClassMealIdParameterHandle() {
+        return clientOrdersMealInteractionClassMealIdParameterHandle;
+    }
+
+    public InteractionClassHandle getPreparedMealRequestInteractionClassHandle() {
+        return preparedMealRequestInteractionClassHandle;
+    }
+
+    public ParameterHandle getPreparedMealRequestInteractionClassClientIdParameterHandle() {
+        return preparedMealRequestInteractionClassClientIdParameterHandle;
+    }
+
+    public ParameterHandle getPreparedMealRequestInteractionClassMealIdParameterHandle() {
+        return preparedMealRequestInteractionClassMealIdParameterHandle;
+    }
+
+    public InteractionClassHandle getClientAsksForBillInteractionClassHandle() {
+        return clientAsksForBillInteractionClassHandle;
+    }
+
+    public ParameterHandle getClientAsksForBillInteractionClassClientIdParameterHandle() {
+        return clientAsksForBillInteractionClassClientIdParameterHandle;
+    }
+
+    public InteractionClassHandle getEndingClientServiceInteractionClassHandle() {
+        return endingClientServiceInteractionClassHandle;
+    }
+
+    public ParameterHandle getEndingClientServiceInteractionClassClientIdParameterHandle() {
+        return endingClientServiceInteractionClassClientIdParameterHandle;
     }
 
     @Override
