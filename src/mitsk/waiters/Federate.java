@@ -5,7 +5,9 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.waiters.object.Client;
 import mitsk.waiters.object.Waiter;
+import mitsk.waiters.object.WaiterRequest;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -45,6 +47,8 @@ public class Federate extends AbstractFederate {
     private InteractionClassHandle endingClientServiceInteractionClassHandle;
 
     private ParameterHandle endingClientServiceInteractionClassClientIdParameterHandle;
+
+    private List<WaiterRequest> waiterRequests = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_WAITERS);
@@ -112,6 +116,16 @@ public class Federate extends AbstractFederate {
 
     public ParameterHandle getEndingClientServiceInteractionClassClientIdParameterHandle() {
         return endingClientServiceInteractionClassClientIdParameterHandle;
+    }
+
+    protected void addWaiterRequest(Long clientId) {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        try {
+            waiterRequests.add(new WaiterRequest(rtiAmbassador, new Client(rtiAmbassador, clientId)));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override
