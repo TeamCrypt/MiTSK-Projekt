@@ -7,6 +7,7 @@ import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 import mitsk.tables.interaction.ClientLeavesTable;
 import mitsk.tables.interaction.ClientTakesTable;
+import mitsk.tables.interaction.FreeTablesAvailable;
 import mitsk.tables.object.Client;
 import mitsk.tables.object.Table;
 
@@ -190,6 +191,7 @@ public class Federate extends AbstractFederate {
 
     public void sendInteraction() {
         clientLeavesTable();
+        freeTablesAvailable();
     }
 
     public void addClientReceived(Long clientId) throws Exception {
@@ -234,6 +236,20 @@ public class Federate extends AbstractFederate {
                     ClientLeavesTable clientLeavesTable = new ClientLeavesTable(rtiAmbassador, table);
 
                     clientLeavesTable.sendInteraction();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void freeTablesAvailable() {
+        for (Table table : tables) {
+            if (table.isFree()) {
+                try {
+                    FreeTablesAvailable freeTablesAvailable = new FreeTablesAvailable(getRTIAmbassador());
+
+                    freeTablesAvailable.sendInteraction();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
