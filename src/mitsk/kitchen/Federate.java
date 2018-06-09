@@ -150,7 +150,7 @@ public class Federate extends AbstractFederate {
     protected void publish() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest"));
+        rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest"));
     }
 
     private double randomDouble(double a, double b) { // Generates random double in range [a, b]
@@ -201,7 +201,7 @@ public class Federate extends AbstractFederate {
         { // NewMealRequest
             newMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewMealRequest");
 
-            rtiAmbassador.publishInteractionClass(newMealRequestInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(newMealRequestInteractionClassHandle);
 
             newMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "clientId");
 
@@ -211,7 +211,7 @@ public class Federate extends AbstractFederate {
         { // TakeFood
             takeFoodInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("TakeFood");
 
-            rtiAmbassador.publishInteractionClass(takeFoodInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(takeFoodInteractionClassHandle);
 
             takeFoodInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(takeFoodInteractionClassHandle, "clientId");
 
