@@ -10,7 +10,7 @@ import mitsk.AbstractFederateAmbassador;
 public class Ambassador extends AbstractFederateAmbassador {
     private EncoderFactory encoderFactory;
 
-    protected Ambassador(AbstractFederate federate) {
+    Ambassador(AbstractFederate federate) {
         super(federate);
 
         encoderFactory = getFederate().getEncoderFactory();

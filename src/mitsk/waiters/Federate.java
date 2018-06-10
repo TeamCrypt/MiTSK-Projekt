@@ -19,7 +19,7 @@ public class Federate extends AbstractFederate {
 
     private static final int NUMBER_OF_WAITERS = 3;
 
-    private int numberOfWaiters = NUMBER_OF_WAITERS;
+    private int numberOfWaiters;
 
     protected List<Waiter> waiters;
 
@@ -72,6 +72,10 @@ public class Federate extends AbstractFederate {
 
         this.numberOfWaiters = numberOfWaiters;
 
+        createWaitersList();
+    }
+
+    private void createWaitersList() throws Exception {
         waiters = new ArrayList<>(numberOfWaiters);
 
         for (int i = 0; i < numberOfWaiters; ++i) {
@@ -79,55 +83,55 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    public InteractionClassHandle getClientCallsWaiterInteractionClassHandle() {
+    InteractionClassHandle getClientCallsWaiterInteractionClassHandle() {
         return clientCallsWaiterInteractionClassHandle;
     }
 
-    public ParameterHandle getClientCallsWaiterInteractionClassClientIdParameterHandle() {
+    ParameterHandle getClientCallsWaiterInteractionClassClientIdParameterHandle() {
         return clientCallsWaiterInteractionClassClientIdParameterHandle;
     }
 
-    public InteractionClassHandle getClientOrdersMealInteractionClassHandle() {
+    InteractionClassHandle getClientOrdersMealInteractionClassHandle() {
         return clientOrdersMealInteractionClassHandle;
     }
 
-    public ParameterHandle getClientOrdersMealInteractionClassClientIdParameterHandle() {
+    ParameterHandle getClientOrdersMealInteractionClassClientIdParameterHandle() {
         return clientOrdersMealInteractionClassClientIdParameterHandle;
     }
 
-    public ParameterHandle getClientOrdersMealInteractionClassMealIdParameterHandle() {
+    ParameterHandle getClientOrdersMealInteractionClassMealIdParameterHandle() {
         return clientOrdersMealInteractionClassMealIdParameterHandle;
     }
 
-    public InteractionClassHandle getPreparedMealRequestInteractionClassHandle() {
+    InteractionClassHandle getPreparedMealRequestInteractionClassHandle() {
         return preparedMealRequestInteractionClassHandle;
     }
 
-    public ParameterHandle getPreparedMealRequestInteractionClassClientIdParameterHandle() {
+    ParameterHandle getPreparedMealRequestInteractionClassClientIdParameterHandle() {
         return preparedMealRequestInteractionClassClientIdParameterHandle;
     }
 
-    public ParameterHandle getPreparedMealRequestInteractionClassMealIdParameterHandle() {
+    ParameterHandle getPreparedMealRequestInteractionClassMealIdParameterHandle() {
         return preparedMealRequestInteractionClassMealIdParameterHandle;
     }
 
-    public InteractionClassHandle getClientAsksForBillInteractionClassHandle() {
+    InteractionClassHandle getClientAsksForBillInteractionClassHandle() {
         return clientAsksForBillInteractionClassHandle;
     }
 
-    public ParameterHandle getClientAsksForBillInteractionClassClientIdParameterHandle() {
+    ParameterHandle getClientAsksForBillInteractionClassClientIdParameterHandle() {
         return clientAsksForBillInteractionClassClientIdParameterHandle;
     }
 
-    public InteractionClassHandle getEndingClientServiceInteractionClassHandle() {
+    InteractionClassHandle getEndingClientServiceInteractionClassHandle() {
         return endingClientServiceInteractionClassHandle;
     }
 
-    public ParameterHandle getEndingClientServiceInteractionClassClientIdParameterHandle() {
+    ParameterHandle getEndingClientServiceInteractionClassClientIdParameterHandle() {
         return endingClientServiceInteractionClassClientIdParameterHandle;
     }
 
-    protected void addNewOrderRequest(Long clientId) {
+    void addNewOrderRequest(Long clientId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         try {
@@ -139,7 +143,7 @@ public class Federate extends AbstractFederate {
 
     private boolean ifIsFreeWaiter() {
         for (Waiter waiter : waiters) {
-            if(waiter.ifFree()) {
+            if (waiter.ifFree()) {
                 return true;
             }
         }
@@ -149,7 +153,7 @@ public class Federate extends AbstractFederate {
 
     private Waiter getFirstFreeWaiter() {
         for (Waiter waiter : waiters) {
-            if(waiter.ifFree()) {
+            if (waiter.ifFree()) {
                 return waiter;
             }
         }
@@ -157,13 +161,13 @@ public class Federate extends AbstractFederate {
         return null;
     }
 
-    protected void informAboutStartedClientServices() {
+    private void informAboutStartedClientServices() {
         List<WaiterRequest> consideredNewOrderRequests = new ArrayList<>();
 
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         for (WaiterRequest newOrderRequest : newOrderRequests) {
-            if(ifIsFreeWaiter()) {
+            if (ifIsFreeWaiter()) {
                 try {
                     Client client = newOrderRequest.getClient();
 
@@ -195,7 +199,7 @@ public class Federate extends AbstractFederate {
 
     private ClientService findClientOrder(Long clientId) {
         for (ClientService clientOrder : clientsOrders) {
-            if((!clientOrder.ifDone()) && (clientOrder.getClient().getIdentificationNumber() == clientId)) {
+            if ((!clientOrder.ifDone()) && (clientOrder.getClient().getIdentificationNumber().equals(clientId))) {
                 return clientOrder;
             }
         }
@@ -203,7 +207,7 @@ public class Federate extends AbstractFederate {
         return null;
     }
 
-    protected void addMealToClientOrder(Long clientId, Long mealId) {
+    void addMealToClientOrder(Long clientId, Long mealId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         ClientService clientOrder = findClientOrder(clientId);
@@ -217,11 +221,11 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    protected void informAboutNewMealRequests() {
+    private void informAboutNewMealRequests() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         for (ClientService clientOrder : clientsOrders) {
-            if((!clientOrder.ifDone()) && (clientOrder.getMeal() != null)) {
+            if ((!clientOrder.ifDone()) && (clientOrder.getMeal() != null)) {
                 try {
                     Client client = clientOrder.getClient();
 
@@ -236,15 +240,15 @@ public class Federate extends AbstractFederate {
                     clientOrder.getWaiter().setFree();
 
                     log("Sent to kitchen request for a meal with id " + meal.getIdentificationNumber() + " for client with id " + client.getIdentificationNumber());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
             }
         }
 
     }
 
-    protected void addTakeMealRequest(Long clientId, Long mealId) {
+    void addTakeMealRequest(Long clientId, Long mealId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         try {
@@ -254,13 +258,13 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    protected void informAboutTakenFood() {
+    private void informAboutTakenFood() {
         List<WaiterRequest> consideredTakeMealRequests = new ArrayList<>();
 
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         for (TakeMealRequest takeMealRequest : takeMealRequests) {
-            if(ifIsFreeWaiter()) {
+            if (ifIsFreeWaiter()) {
                 try {
                     Client client = takeMealRequest.getClient();
 
@@ -283,8 +287,8 @@ public class Federate extends AbstractFederate {
                     consideredTakeMealRequests.add(takeMealRequest);
 
                     log("The meal with id " + meal.getIdentificationNumber() + " for client with id " + client.getIdentificationNumber() + " has been taken from the kitchen");
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
             }
         }
@@ -294,11 +298,11 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    protected void informAboutGavenMeals() {
+    private void informAboutGavenMeals() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         for (ClientService clientPreparedOrder : clientsPreparedOrders) {
-            if(!clientPreparedOrder.ifDone()) {
+            if (!clientPreparedOrder.ifDone()) {
                 try {
                     Client client = clientPreparedOrder.getClient();
 
@@ -313,14 +317,14 @@ public class Federate extends AbstractFederate {
                     clientPreparedOrder.getWaiter().setFree();
 
                     log("The meal with id " + meal.getIdentificationNumber() + " has been gaven to the client with id " + client.getIdentificationNumber());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
             }
         }
     }
 
-    protected void addGiveBillRequest(Long clientId) {
+    void addGiveBillRequest(Long clientId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         try {
@@ -334,7 +338,7 @@ public class Federate extends AbstractFederate {
         double billCost = 0.0;
 
         for (ClientService clientPreparedOrder : clientsPreparedOrders) {
-            if(clientPreparedOrder.ifDone() &&  clientPreparedOrder.getClient().getIdentificationNumber() == clientId) {
+            if (clientPreparedOrder.ifDone() && clientPreparedOrder.getClient().getIdentificationNumber().equals(clientId)) {
                 billCost = billCost + 10.0; // Every meal cost exactly 10.0
             }
         }
@@ -342,13 +346,13 @@ public class Federate extends AbstractFederate {
         return billCost;
     }
 
-    protected void informAboutStartedPaymentServices() {
+    private void informAboutStartedPaymentServices() {
         List<WaiterRequest> consideredGiveBillRequests = new ArrayList<>();
 
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         for (WaiterRequest giveBillRequest : giveBillRequests) {
-            if(ifIsFreeWaiter()) {
+            if (ifIsFreeWaiter()) {
                 try {
                     Client client = giveBillRequest.getClient();
 
@@ -380,40 +384,40 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    protected void endClientService(Long clientId) {
+    void endClientService(Long clientId) {
         List<ClientService> foundClientOrders = new ArrayList<>();
 
         for (ClientService clientOrder : clientsOrders) {
-            if(clientOrder.getClient().getIdentificationNumber() == clientId) {
+            if (clientOrder.getClient().getIdentificationNumber().equals(clientId)) {
                 foundClientOrders.add(clientOrder);
             }
         }
 
-        if(foundClientOrders.size() > 0) {
+        if (foundClientOrders.size() > 0) {
             clientsOrders.removeAll(foundClientOrders);
         }
 
         List<ClientService> foundClientPreparedOrders = new ArrayList<>();
 
         for (ClientService clientPreparedOrder : clientsPreparedOrders) {
-            if(clientPreparedOrder.getClient().getIdentificationNumber() == clientId) {
+            if (clientPreparedOrder.getClient().getIdentificationNumber().equals(clientId)) {
                 foundClientOrders.add(clientPreparedOrder);
             }
         }
 
-        if(foundClientPreparedOrders.size() > 0) {
+        if (foundClientPreparedOrders.size() > 0) {
             clientsPreparedOrders.removeAll(foundClientPreparedOrders);
         }
 
         Bill clientBill = null;
 
         for (Bill bill : clientsBills) {
-            if(bill.getClient().getIdentificationNumber() == clientId) {
+            if (bill.getClient().getIdentificationNumber().equals(clientId)) {
                 clientBill = bill;
             }
         }
 
-        if(clientBill != null) {
+        if (clientBill != null) {
             clientBill.payBill();
 
             clientBill.getWaiter().setFree();
@@ -431,10 +435,10 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
-            (new File("foms/Waiters.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL()
         };
     }
 
@@ -460,9 +464,13 @@ public class Federate extends AbstractFederate {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.StartingClientService"));
+
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewMealRequest"));
+
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.TakeFood"));
+
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.GiveMeal"));
+
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PaymentService"));
     }
 
@@ -493,43 +501,48 @@ public class Federate extends AbstractFederate {
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        // ClientCallsWaiter
-        clientCallsWaiterInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
+        { // ClientCallsWaiter
+            clientCallsWaiterInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientCallsWaiter");
 
-        rtiAmbassador.subscribeInteractionClass(clientCallsWaiterInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(clientCallsWaiterInteractionClassHandle);
 
-        clientCallsWaiterInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientCallsWaiterInteractionClassHandle, "clientId");
+            clientCallsWaiterInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientCallsWaiterInteractionClassHandle, "clientId");
+        }
 
-        // ClientOrdersMeal
-        clientOrdersMealInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
+        { // ClientOrdersMeal
+            clientOrdersMealInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientOrdersMeal");
 
-        rtiAmbassador.subscribeInteractionClass(clientOrdersMealInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(clientOrdersMealInteractionClassHandle);
 
-        clientOrdersMealInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "clientId");
+            clientOrdersMealInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "clientId");
 
-        clientOrdersMealInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "mealId");
+            clientOrdersMealInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(clientOrdersMealInteractionClassHandle, "mealId");
+        }
 
-        // PreparedMealRequest
-        preparedMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest");
+        { // PreparedMealRequest
+            preparedMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest");
 
-        rtiAmbassador.subscribeInteractionClass(preparedMealRequestInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(preparedMealRequestInteractionClassHandle);
 
-        preparedMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "clientId");
+            preparedMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "clientId");
 
-        preparedMealRequestInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "mealId");
+            preparedMealRequestInteractionClassMealIdParameterHandle = rtiAmbassador.getParameterHandle(preparedMealRequestInteractionClassHandle, "mealId");
+        }
 
-        // ClientAsksForBill
-        clientAsksForBillInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
+        { // ClientAsksForBill
+            clientAsksForBillInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientAsksForBill");
 
-        rtiAmbassador.subscribeInteractionClass(clientAsksForBillInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(clientAsksForBillInteractionClassHandle);
 
-        clientAsksForBillInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientAsksForBillInteractionClassHandle, "clientId");
+            clientAsksForBillInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientAsksForBillInteractionClassHandle, "clientId");
+        }
 
-        // EndingClientService
-        endingClientServiceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
+        { // EndingClientService
+            endingClientServiceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.EndingClientService");
 
-        rtiAmbassador.subscribeInteractionClass(endingClientServiceInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(endingClientServiceInteractionClassHandle);
 
-        endingClientServiceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(endingClientServiceInteractionClassHandle, "clientId");
+            endingClientServiceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(endingClientServiceInteractionClassHandle, "clientId");
+        }
     }
 }
