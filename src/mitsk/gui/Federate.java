@@ -11,6 +11,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Federate extends AbstractFederate {
+    private static final int ITERATIONS = 20;
+
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
     private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
@@ -71,6 +73,33 @@ public class Federate extends AbstractFederate {
         return new URL[]{
                 (new File("foms/Gui.xml")).toURI().toURL()
         };    }
+
+    public static void main(String[] args) {
+        String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
+
+        try {
+            new mitsk.gui.Federate(federationName).run();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public void run() throws Exception {
+        super.run();
+
+        for (int i = 0; i < ITERATIONS; i++) {
+            sendInteraction();
+
+            advanceTime(1.0);
+
+            log("Time Advanced to " + getFederateAmbassador().getFederateTime());
+        }
+
+        resignFederation();
+    }
+
+    private void sendInteraction() { }
 
     @Override
     protected void publish() throws Exception {
