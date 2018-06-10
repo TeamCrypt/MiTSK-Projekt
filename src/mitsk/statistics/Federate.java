@@ -13,11 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle clientImpatienceInteractionClassHandle;
 
     private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
@@ -57,6 +54,7 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL()

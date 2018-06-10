@@ -15,14 +15,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Federate extends AbstractFederate {
     private static final double A = 8.0;
 
     private static final double B = 32.0;
-
-    private static final int ITERATIONS = 20;
 
     private InteractionClassHandle newMealRequestInteractionClassHandle;
 
@@ -33,8 +30,6 @@ public class Federate extends AbstractFederate {
     private List<MealRequest> mealsRequests = new ArrayList<>();
 
     private List<Meal> preparedMeals = new ArrayList<>();
-
-    private Random random = new Random();
 
     private InteractionClassHandle takeFoodInteractionClassHandle;
 
@@ -67,6 +62,7 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL()
@@ -150,13 +146,7 @@ public class Federate extends AbstractFederate {
     protected void publish() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest"));
-    }
-
-    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
-        double value = (random.nextDouble() * (b - a)) + a;
-
-        return Math.round(value);
+        rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.PreparedMealRequest"));
     }
 
     boolean removePreparedFood(Long clientId, Long mealId) {
@@ -201,7 +191,7 @@ public class Federate extends AbstractFederate {
         { // NewMealRequest
             newMealRequestInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewMealRequest");
 
-            rtiAmbassador.publishInteractionClass(newMealRequestInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(newMealRequestInteractionClassHandle);
 
             newMealRequestInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newMealRequestInteractionClassHandle, "clientId");
 
@@ -211,7 +201,7 @@ public class Federate extends AbstractFederate {
         { // TakeFood
             takeFoodInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("TakeFood");
 
-            rtiAmbassador.publishInteractionClass(takeFoodInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(takeFoodInteractionClassHandle);
 
             takeFoodInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(takeFoodInteractionClassHandle, "clientId");
 
