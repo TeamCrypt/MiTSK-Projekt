@@ -380,6 +380,48 @@ public class Federate extends AbstractFederate {
         }
     }
 
+    protected void endClientService(Long clientId) {
+        List<ClientService> foundClientOrders = new ArrayList<>();
+
+        for (ClientService clientOrder : clientsOrders) {
+            if(clientOrder.getClient().getIdentificationNumber() == clientId) {
+                foundClientOrders.add(clientOrder);
+            }
+        }
+
+        if(foundClientOrders.size() > 0) {
+            clientsOrders.removeAll(foundClientOrders);
+        }
+
+        List<ClientService> foundClientPreparedOrders = new ArrayList<>();
+
+        for (ClientService clientPreparedOrder : clientsPreparedOrders) {
+            if(clientPreparedOrder.getClient().getIdentificationNumber() == clientId) {
+                foundClientOrders.add(clientPreparedOrder);
+            }
+        }
+
+        if(foundClientPreparedOrders.size() > 0) {
+            clientsPreparedOrders.removeAll(foundClientPreparedOrders);
+        }
+
+        Bill clientBill = null;
+
+        for (Bill bill : clientsBills) {
+            if(bill.getClient().getIdentificationNumber() == clientId) {
+                clientBill = bill;
+            }
+        }
+
+        if(clientBill != null) {
+            clientBill.payBill();
+
+            clientBill.getWaiter().setFree();
+
+            clientsBills.remove(clientBill);
+        }
+    }
+
     @Override
     protected AbstractFederateAmbassador createAmbassador() throws Exception {
         return new Ambassador(this);
