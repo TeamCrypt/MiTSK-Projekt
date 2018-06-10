@@ -11,8 +11,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
     private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
@@ -65,7 +63,9 @@ public class Federate extends AbstractFederate {
             (new File("foms/Gui.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
-            (new File("foms/Statistics.xml")).toURI().toURL()
+            (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL()
         };
     }
 

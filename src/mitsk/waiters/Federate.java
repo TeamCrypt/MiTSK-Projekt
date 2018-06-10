@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private static final int NUMBER_OF_WAITERS = 3;
 
     private int numberOfWaiters;
@@ -435,9 +433,11 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Gui.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL(),
             (new File("foms/Waiters.xml")).toURI().toURL()
         };
     }
