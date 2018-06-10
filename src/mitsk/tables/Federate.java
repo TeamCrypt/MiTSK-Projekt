@@ -205,9 +205,7 @@ public class Federate extends AbstractFederate {
         for (Table table : tables) {
             if (table.isFree() && !table.isNotified()) {
                 try {
-                    FreeTablesAvailable freeTablesAvailable = new FreeTablesAvailable(getRTIAmbassador());
-
-                    freeTablesAvailable.sendInteraction();
+                    new FreeTablesAvailable(getRTIAmbassador()).sendInteraction();
 
                     table.setNotified();
                 } catch (Exception exception) {

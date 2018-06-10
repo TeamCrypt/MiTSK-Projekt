@@ -110,8 +110,30 @@
 					<semantics>Client identification number</semantics>
 				</parameter>
 			</interactionClass>
+            <interactionClass>
+                <name>LeaveFromQueue</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <parameter>
+                    <name>clientId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Client identification number</semantics>
+                </parameter>
+                <interactionClass>
+                    <name>ClientImpatience</name>
+                    <sharing>Publish</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <parameter>
+                        <name>clientId</name>
+                        <dataType>HLAinteger64BE</dataType>
+                        <semantics>Client identification number</semantics>
+                    </parameter>
+                </interactionClass>
+            </interactionClass>
 			<interactionClass>
-				<name>LeaveFromQueue</name>
+				<name>ClientLeavesTable</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
@@ -120,17 +142,11 @@
 					<dataType>HLAinteger64BE</dataType>
 					<semantics>Client identification number</semantics>
 				</parameter>
-				<interactionClass>
-					<name>ClientImpatience</name>
-					<sharing>PublishSubscribe</sharing>
-					<transportation>HLAreliable</transportation>
-					<order>TimeStamp</order>
-					<parameter>
-						<name>clientId</name>
-						<dataType>HLAinteger64BE</dataType>
-						<semantics>Client identification number</semantics>
-					</parameter>
-				</interactionClass>
+				<parameter>
+					<name>tableId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Table identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>NewInRestaurant</name>

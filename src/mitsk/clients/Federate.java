@@ -21,11 +21,23 @@ public class Federate extends AbstractFederate {
 
     private HashMap<Long, Client> clients = new HashMap<>();
 
+    private InteractionClassHandle clientImpatienceInteractionClassHandle;
+
+    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
+
+    private InteractionClassHandle clientLeavesTableInteractionClassHandle;
+
+    private ParameterHandle clientLeavesTableInteractionClassClientIdParameterHandle;
+
     private InteractionClassHandle clientTakesTableInteractionClassHandle;
 
     private ParameterHandle clientTakesTableInteractionClassClientIdParameterHandle;
 
     private ParameterHandle clientTakesTableInteractionClassTableIdParameterHandle;
+
+    private InteractionClassHandle leaveFromQueueInteractionClassHandle;
+
+    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
     private double nextClientAt = 0.0;
 
@@ -68,6 +80,22 @@ public class Federate extends AbstractFederate {
         }
     }
 
+    InteractionClassHandle getClientImpatienceInteractionClassHandle() {
+        return clientImpatienceInteractionClassHandle;
+    }
+
+    ParameterHandle getClientImpatienceInteractionClassClientIdParameterHandle() {
+        return clientImpatienceInteractionClassClientIdParameterHandle;
+    }
+
+    ParameterHandle getClientLeavesTableInteractionClassClientIdParameterHandle() {
+        return clientLeavesTableInteractionClassClientIdParameterHandle;
+    }
+
+    InteractionClassHandle getClientLeavesTableInteractionClassHandle() {
+        return clientLeavesTableInteractionClassHandle;
+    }
+
     InteractionClassHandle getClientTakesTableInteractionClassHandle() {
         return clientTakesTableInteractionClassHandle;
     }
@@ -78,6 +106,14 @@ public class Federate extends AbstractFederate {
 
     ParameterHandle getClientTakesTableInteractionClassTableIdParameterHandle() {
         return clientTakesTableInteractionClassTableIdParameterHandle;
+    }
+
+    InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
+        return leaveFromQueueInteractionClassHandle;
+    }
+
+    ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
+        return leaveFromQueueInteractionClassClientIdParameterHandle;
     }
 
     @Override
@@ -150,6 +186,44 @@ public class Federate extends AbstractFederate {
             clientTakesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
 
             clientTakesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+        }
+
+        { // LeaveFromQueue
+            leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+
+            rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
+
+            leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
+        }
+
+        { // ClientImpatience
+            clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+
+            rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
+
+            clientImpatienceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
+        }
+
+        { // ClientLeavesTable
+            clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
+
+            rtiAmbassador.subscribeInteractionClass(clientLeavesTableInteractionClassHandle);
+
+            clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientLeavesTableInteractionClassHandle, "clientId");
+        }
+    }
+
+    void removeClient(Long clientIdentificationNumber) {
+        if (clients.containsKey(clientIdentificationNumber)) {
+            try {
+                Client client = clients.remove(clientIdentificationNumber);
+
+                client.destruct();
+
+                log("Removed Client " + clientIdentificationNumber);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }

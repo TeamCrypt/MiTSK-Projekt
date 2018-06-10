@@ -51,6 +51,60 @@ public class Ambassador extends AbstractFederateAmbassador {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        } else if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
+            try {
+                Long clientIdentificationNumber;
+
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                    clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
+
+                    clientIdentificationNumber = clientId.getValue();
+                }
+
+                federate.removeClient(clientIdentificationNumber);
+
+                log("Client " + clientIdentificationNumber + " removes");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        } else if (interactionClass.equals(federate.getClientImpatienceInteractionClassHandle())) {
+            try {
+                Long clientIdentificationNumber;
+
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                    clientId.decode(theParameters.get(federate.getClientImpatienceInteractionClassClientIdParameterHandle()));
+
+                    clientIdentificationNumber = clientId.getValue();
+                }
+
+                federate.removeClient(clientIdentificationNumber);
+
+                log("Impatient Client " + clientIdentificationNumber + " removes");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        } else if (interactionClass.equals(federate.getClientLeavesTableInteractionClassHandle())) {
+            try {
+                Long clientIdentificationNumber;
+
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                    clientId.decode(theParameters.get(federate.getClientLeavesTableInteractionClassClientIdParameterHandle()));
+
+                    clientIdentificationNumber = clientId.getValue();
+                }
+
+                federate.removeClient(clientIdentificationNumber);
+
+                log("Client " + clientIdentificationNumber + " leaves Restaurant");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }
