@@ -23,9 +23,9 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
             // @TODO
-        } else if (interactionClass.equals(federate.getLeaveFromQueueInteracionClassHandle())) {
+        } else if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
             // @TODO
-        } else if ((interactionClass.equals(federate.getClientImpatienceInteracionClassHandle()))) {
+        } else if ((interactionClass.equals(federate.getClientImpatienceInteractionClassHandle()))) {
             // @TODO
         }
     }
