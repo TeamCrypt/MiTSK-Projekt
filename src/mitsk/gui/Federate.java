@@ -131,7 +131,7 @@ public class Federate extends AbstractFederate {
         }
 
         { // ClientImpatience
-            clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue.ClientImpatience");
+            clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
 
             rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
 
