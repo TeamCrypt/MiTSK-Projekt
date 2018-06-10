@@ -131,6 +131,8 @@ public class Federate extends AbstractFederate {
 
         leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
 
+        rtiAmbassador.publishInteractionClass(leaveFromQueueInteractionClassHandle);
+
         leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
 
     }

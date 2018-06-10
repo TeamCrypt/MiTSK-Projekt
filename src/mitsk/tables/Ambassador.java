@@ -22,7 +22,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         Federate federate = (Federate) getFederate();
 
-        if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
+        if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle()) ) {
             try {
                 HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 

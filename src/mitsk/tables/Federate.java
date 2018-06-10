@@ -53,6 +53,10 @@ public class Federate extends AbstractFederate {
 
     private InteractionClassHandle freeTablesAvailableInteractionClassHandle;
 
+    private InteractionClassHandle clientImpatienceInteractionClassHandle;
+
+    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
+
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_TABLES);
     }
@@ -102,7 +106,11 @@ public class Federate extends AbstractFederate {
     }
 
     InteractionClassHandle getFreeTablesAvailableInteractionClassHandle() {
-        return getFreeTablesAvailableInteractionClassHandle();
+        return freeTablesAvailableInteractionClassHandle;
+    }
+
+    InteractionClassHandle getClientImpatienceInteractionClassHandle() {
+        return clientImpatienceInteractionClassHandle;
     }
 
     private void createTablesList() throws Exception {
@@ -287,6 +295,13 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
 
         leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
+
+
+        clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+
+        rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
+
+        clientImpatienceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
 
     }
 }
