@@ -97,6 +97,11 @@
 					<dataType>HLAinteger64BE</dataType>
 					<semantics>Client identification number</semantics>
 				</parameter>
+				<parameter>
+					<name>billCost</name>
+					<dataType>HLAfloat64BE</dataType>
+					<semantics>Cost of all ordered meals by client</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>ClientCallsWaiter</name>

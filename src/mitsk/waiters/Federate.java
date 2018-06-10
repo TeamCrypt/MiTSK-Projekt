@@ -5,10 +5,7 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
-import mitsk.waiters.interaction.GiveMeal;
-import mitsk.waiters.interaction.NewMealRequest;
-import mitsk.waiters.interaction.StartingClientService;
-import mitsk.waiters.interaction.TakeFood;
+import mitsk.waiters.interaction.*;
 import mitsk.waiters.object.*;
 
 import java.io.File;
@@ -59,6 +56,8 @@ public class Federate extends AbstractFederate {
     private List<ClientService> clientsOrders = new ArrayList<>();
 
     private List<ClientService> clientsPreparedOrders = new ArrayList<>();
+
+    private List<Bill> clientsBills = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_WAITERS);
@@ -282,6 +281,8 @@ public class Federate extends AbstractFederate {
                     takeFood.sendInteraction();
 
                     consideredTakeMealRequests.add(takeMealRequest);
+
+                    log("The meal with id " + meal.getIdentificationNumber() + " for client with id " + client.getIdentificationNumber() + " has been taken from the kitchen");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -326,6 +327,56 @@ public class Federate extends AbstractFederate {
             giveBillRequests.add(new WaiterRequest(rtiAmbassador, new Client(rtiAmbassador, clientId)));
         } catch (Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    private double generateBillCost(Long clientId) {
+        double billCost = 0.0;
+
+        for (ClientService clientPreparedOrder : clientsPreparedOrders) {
+            if(clientPreparedOrder.ifDone() &&  clientPreparedOrder.getClient().getIdentificationNumber() == clientId) {
+                billCost = billCost + 10.0; // Every meal cost exactly 10.0
+            }
+        }
+
+        return billCost;
+    }
+
+    protected void informAboutStartedPaymentServices() {
+        List<WaiterRequest> consideredGiveBillRequests = new ArrayList<>();
+
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        for (WaiterRequest giveBillRequest : giveBillRequests) {
+            if(ifIsFreeWaiter()) {
+                try {
+                    Client client = giveBillRequest.getClient();
+
+                    Waiter waiter = getFirstFreeWaiter();
+
+                    waiter.setOccupied();
+
+                    double billCost = generateBillCost(client.getIdentificationNumber());
+
+                    Bill bill = new Bill(rtiAmbassador, client, waiter, billCost);
+
+                    clientsBills.add(bill);
+
+                    PaymentService paymentService = new PaymentService(rtiAmbassador, client, billCost);
+
+                    paymentService.sendInteraction();
+
+                    consideredGiveBillRequests.add(giveBillRequest);
+
+                    log("Started payment service for client with id " + client.getIdentificationNumber());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (consideredGiveBillRequests.size() > 0) {
+            giveBillRequests.removeAll(consideredGiveBillRequests);
         }
     }
 
@@ -393,6 +444,7 @@ public class Federate extends AbstractFederate {
         informAboutNewMealRequests();
         informAboutTakenFood();
         informAboutGavenMeals();
+        informAboutStartedPaymentServices();
     }
 
     @Override
