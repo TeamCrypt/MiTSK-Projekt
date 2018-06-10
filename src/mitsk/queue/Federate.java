@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Federate extends AbstractFederate {
     private static final double A = 4.0;
@@ -31,8 +30,6 @@ public class Federate extends AbstractFederate {
     private List<Client> newInQueue = new ArrayList<>();
 
     private List<Client> queue = new ArrayList<>();
-
-    private Random random = new Random();
 
     private int allowedToEnter = 0;
 
@@ -126,12 +123,6 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue"));
     }
 
-    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
-        double value = (random.nextDouble() * (b - a)) + a;
-
-        return Math.round(value);
-    }
-
     private void removeImpatientClients() {
         List<Client> toRemove = new ArrayList<>();
 
@@ -163,9 +154,7 @@ public class Federate extends AbstractFederate {
             try {
                 Client client = queue.remove(0);
 
-                LeaveFromQueue leaveFromQueue = new LeaveFromQueue(rtiAmbassador, client);
-
-                leaveFromQueue.sendInteraction();
+                new LeaveFromQueue(rtiAmbassador, client).sendInteraction();
 
                 log("Client " + client.getIdentificationNumber() + " enters to the Restaurant");
             } catch (Exception exception) {

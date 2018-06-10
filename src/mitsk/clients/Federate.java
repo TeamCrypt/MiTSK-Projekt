@@ -10,16 +10,15 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Random;
 
 public class Federate extends AbstractFederate {
     private static final double A = 1.0;
 
-    private static final double B = 10.0;
+    private static final double B = 8.0;
 
     private HashMap<Long, Client> clients = new HashMap<>();
 
-    private Random random = new Random();
+    private double nextClientAt = 0.0;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -31,16 +30,22 @@ public class Federate extends AbstractFederate {
     }
 
     private void createNewClient() {
-        try {
-            RTIambassador rtiAmbassador = getRTIAmbassador();
+        if (nextClientAt <= getFederateAmbassador().getFederateTime()) {
+            try {
+                RTIambassador rtiAmbassador = getRTIAmbassador();
 
-            Client client = new Client(rtiAmbassador);
+                Client client = new Client(rtiAmbassador);
 
-            new NewClient(rtiAmbassador, client).sendInteraction();
+                new NewClient(rtiAmbassador, client).sendInteraction();
 
-            clients.put(client.getIdentificationNumber(), client);
-        } catch (Exception exception) {
-            exception.printStackTrace();
+                clients.put(client.getIdentificationNumber(), client);
+
+                log("New Client " + client.getIdentificationNumber());
+
+                nextClientAt += randomDouble(A, B);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
@@ -81,12 +86,6 @@ public class Federate extends AbstractFederate {
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient"));
     }
 
-    private double randomDouble(double a, double b) { // Generates random double in range [a, b]
-        double value = (random.nextDouble() * (b - a)) + a;
-
-        return Math.round(value);
-    }
-
     @Override
     public void run() throws Exception {
         super.run();
@@ -94,7 +93,7 @@ public class Federate extends AbstractFederate {
         for (int i = 0; i < ITERATIONS; i++) {
             sendInteraction();
 
-            advanceTime(randomDouble(A, B));
+            advanceTime(1.0);
 
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }
