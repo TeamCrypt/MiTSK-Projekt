@@ -5,7 +5,7 @@ import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.exceptions.FederateInternalError;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
-import mitsk.kitchen.Federate;
+import mitsk.gui.Federate;
 
 public class Ambassador extends AbstractFederateAmbassador {
     private EncoderFactory encoderFactory;
@@ -21,5 +21,15 @@ public class Ambassador extends AbstractFederateAmbassador {
         super.receiveInteraction(interactionClass, theParameters, userSuppliedTag, sentOrdering, theTransport, theTime, receivedOrdering, retractionHandle, receiveInfo);
 
         Federate federate = (Federate) getFederate();
-    }
+
+        if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
+
+        } else if (interactionClass.equals(federate.getLeaveFromQueueInteracionClassHandle())) {
+
+        } else if ((interactionClass.equals(federate.getClientImpatienceInteracionClassHandle()))) {
+
+        }
+
+
+        }
 }
