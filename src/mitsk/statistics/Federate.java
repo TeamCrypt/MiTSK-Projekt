@@ -13,11 +13,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle clientImpatienceInteractionClassHandle;
 
     private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;

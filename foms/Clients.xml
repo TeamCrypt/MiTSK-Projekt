@@ -99,11 +99,21 @@
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 				<interactionClass>
 					<name>ClientImpatience</name>
 					<sharing>PublishSubscribe</sharing>
 					<transportation>HLAreliable</transportation>
 					<order>TimeStamp</order>
+					<parameter>
+						<name>clientId</name>
+						<dataType>HLAinteger64BE</dataType>
+						<semantics>Client identification number</semantics>
+					</parameter>
 				</interactionClass>
 			</interactionClass>
 			<interactionClass>

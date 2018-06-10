@@ -14,9 +14,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Random;
 
 public abstract class AbstractFederate {
     public static final String READY_TO_RUN = "ReadyToRun";
+
+    protected static final int ITERATIONS = 60;
 
     private String federationName;
 
@@ -25,6 +28,8 @@ public abstract class AbstractFederate {
     private AbstractFederateAmbassador federateAmbassador;
 
     private EncoderFactory encoderFactory;
+
+    private Random random = new Random();
 
     private HLAfloat64TimeFactory timeFactory;
 
@@ -145,6 +150,12 @@ public abstract class AbstractFederate {
     }
 
     protected abstract void publish() throws Exception;
+
+    protected double randomDouble(double a, double b) { // Generates random double in range [a, b]
+        double value = (random.nextDouble() * (b - a)) + a;
+
+        return Math.round(value);
+    }
 
     protected void resignFederation() throws Exception {
         rtiAmbassador.resignFederationExecution(ResignAction.DELETE_OBJECTS);

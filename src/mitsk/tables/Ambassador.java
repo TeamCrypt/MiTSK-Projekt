@@ -1,4 +1,4 @@
-package mitsk.queue;
+package mitsk.tables;
 
 import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
@@ -22,24 +22,20 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         Federate federate = (Federate) getFederate();
 
-        if (interactionClass.equals(federate.getNewClientInteractionClassHandle())) {
+        if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
             try {
                 HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                clientId.decode(theParameters.get(federate.getNewClientInteractionClassClientIdParameterHandle()));
+                clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
 
                 Long clientIdentificationNumber = clientId.getValue();
 
-                federate.addClientToQueue(clientIdentificationNumber);
+                federate.addClientReceived(clientIdentificationNumber);
 
-                log("Received Client " + clientIdentificationNumber);
+                log("Client " + clientIdentificationNumber + " enters Restaurant");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        } else if (interactionClass.equals((federate.getFreeTablesAvailableInteractionClassHandle()))) {
-            federate.allowToEnter();
-
-            log("Free table for Client in the Restaurant");
         }
     }
 }
