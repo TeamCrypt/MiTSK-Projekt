@@ -50,6 +50,22 @@ public class Ambassador extends AbstractFederateAmbassador {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        } else if (interactionClass.equals(federate.getPreparedMealRequestInteractionClassHandle())) {
+            try {
+                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                clientId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassClientIdParameterHandle()));
+
+                HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
+
+                mealId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassMealIdParameterHandle()));
+
+                federate.addTakeMealRequest(clientId.getValue(), mealId.getValue());
+
+                log("Meal with id " + mealId.getValue() + " ordered by client with id " + clientId.getValue() + " has been already prepared and is waiting in the kitchen");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }

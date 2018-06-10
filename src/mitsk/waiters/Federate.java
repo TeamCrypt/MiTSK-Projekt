@@ -50,6 +50,8 @@ public class Federate extends AbstractFederate {
 
     private List<WaiterRequest> newOrderRequests = new ArrayList<>();
 
+    private List<TakeMealRequest> takeMealRequests = new ArrayList<>();
+
     private List<ClientService> clientsOrders = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
@@ -235,6 +237,16 @@ public class Federate extends AbstractFederate {
             }
         }
 
+    }
+
+    protected void addTakeMealRequest(Long clientId, Long mealId) {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        try {
+            takeMealRequests.add(new TakeMealRequest(rtiAmbassador, new Client(rtiAmbassador, clientId), new Meal(rtiAmbassador, mealId)));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
 
     @Override
