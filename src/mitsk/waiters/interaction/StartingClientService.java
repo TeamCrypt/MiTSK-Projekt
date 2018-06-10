@@ -7,7 +7,7 @@ import mitsk.AbstractInteraction;
 import mitsk.waiters.object.Client;
 
 public class StartingClientService extends AbstractInteraction {
-    Client client;
+    private Client client;
 
     private InteractionClassHandle startingClientServiceInteractionClassHandle;
 

@@ -8,9 +8,9 @@ import mitsk.waiters.object.Client;
 import mitsk.waiters.object.Meal;
 
 public class TakeFood extends AbstractInteraction {
-    Client client;
+    private Client client;
 
-    Meal meal;
+    private Meal meal;
 
     private InteractionClassHandle takeFoodInteractionClassHandle;
 
