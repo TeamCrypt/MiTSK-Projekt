@@ -7,6 +7,7 @@ import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 import mitsk.waiters.interaction.NewMealRequest;
 import mitsk.waiters.interaction.StartingClientService;
+import mitsk.waiters.interaction.TakeFood;
 import mitsk.waiters.object.*;
 
 import java.io.File;
@@ -53,6 +54,8 @@ public class Federate extends AbstractFederate {
     private List<TakeMealRequest> takeMealRequests = new ArrayList<>();
 
     private List<ClientService> clientsOrders = new ArrayList<>();
+
+    private List<ClientService> clientsPreparedOrders = new ArrayList<>();
 
     public Federate(String federationName) throws Exception {
         this(federationName, NUMBER_OF_WAITERS);
@@ -217,11 +220,11 @@ public class Federate extends AbstractFederate {
 
         for (ClientService clientOrder : clientsOrders) {
             if((!clientOrder.ifDone()) && (clientOrder.getMeal() != null)) {
-                Client client = clientOrder.getClient();
-
-                Meal meal = clientOrder.getMeal();
-
                 try {
+                    Client client = clientOrder.getClient();
+
+                    Meal meal = clientOrder.getMeal();
+
                     NewMealRequest newMealRequest = new NewMealRequest(rtiAmbassador, client, meal);
 
                     newMealRequest.sendInteraction();
@@ -246,6 +249,44 @@ public class Federate extends AbstractFederate {
             takeMealRequests.add(new TakeMealRequest(rtiAmbassador, new Client(rtiAmbassador, clientId), new Meal(rtiAmbassador, mealId)));
         } catch (Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    protected void informAboutTakenFood() {
+        List<WaiterRequest> consideredTakeMealRequests = new ArrayList<>();
+
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        for (TakeMealRequest takeMealRequest : takeMealRequests) {
+            if(ifIsFreeWaiter()) {
+                try {
+                    Client client = takeMealRequest.getClient();
+
+                    Meal meal = takeMealRequest.getMeal();
+
+                    Waiter waiter = getFirstFreeWaiter();
+
+                    waiter.setOccupied();
+
+                    ClientService clientPreparedOrder = new ClientService(rtiAmbassador, client, waiter);
+
+                    clientPreparedOrder.setMeal(meal);
+
+                    clientsPreparedOrders.add(clientPreparedOrder);
+
+                    TakeFood takeFood = new TakeFood(rtiAmbassador, client, meal);
+
+                    takeFood.sendInteraction();
+
+                    consideredTakeMealRequests.add(takeMealRequest);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (consideredTakeMealRequests.size() > 0) {
+            takeMealRequests.removeAll(consideredTakeMealRequests);
         }
     }
 
@@ -311,6 +352,7 @@ public class Federate extends AbstractFederate {
     public void sendInteraction() {
         informAboutStartedClientServices();
         informAboutNewMealRequests();
+        informAboutTakenFood();
     }
 
     @Override
