@@ -34,7 +34,7 @@ public class GiveMeal extends AbstractInteraction {
     public void sendInteraction() throws Exception {
         RTIambassador rtiAmbassador = getRtiAmbassador();
 
-        ParameterHandleValueMap parameters = rtiAmbassador.getParameterHandleValueMapFactory().create(1);
+        ParameterHandleValueMap parameters = rtiAmbassador.getParameterHandleValueMapFactory().create(2);
 
         HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
 
