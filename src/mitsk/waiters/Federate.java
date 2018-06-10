@@ -5,6 +5,7 @@ import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
+import mitsk.waiters.interaction.NewMealRequest;
 import mitsk.waiters.interaction.StartingClientService;
 import mitsk.waiters.object.*;
 
@@ -209,6 +210,33 @@ public class Federate extends AbstractFederate {
         }
     }
 
+    protected void informAboutNewMealRequests() {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        for (ClientService clientService : clientsOrders) {
+            if((!clientService.ifDone()) && (clientService.getMeal() != null)) {
+                Client client = clientService.getClient();
+
+                Meal meal = clientService.getMeal();
+
+                try {
+                    NewMealRequest newMealRequest = new NewMealRequest(rtiAmbassador, client, meal);
+
+                    newMealRequest.sendInteraction();
+
+                    clientService.finishService();
+
+                    clientService.getWaiter().setFree();
+
+                    log("Sent to kitchen request for a meal with id " + meal.getIdentificationNumber() + " for client with id " + client.getIdentificationNumber());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
     @Override
     protected AbstractFederateAmbassador createAmbassador() throws Exception {
         return new Ambassador(this);
@@ -270,6 +298,7 @@ public class Federate extends AbstractFederate {
 
     public void sendInteraction() {
         informAboutStartedClientServices();
+        informAboutNewMealRequests();
     }
 
     @Override
