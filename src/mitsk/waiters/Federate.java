@@ -48,7 +48,7 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle endingClientServiceInteractionClassClientIdParameterHandle;
 
-    private List<WaiterRequest> waiterRequests = new ArrayList<>();
+    private List<WaiterRequest> newOrderRequests = new ArrayList<>();
 
     private List<ClientService> clientsOrders = new ArrayList<>();
 
@@ -120,11 +120,11 @@ public class Federate extends AbstractFederate {
         return endingClientServiceInteractionClassClientIdParameterHandle;
     }
 
-    protected void addWaiterRequest(Long clientId) {
+    protected void addNewOrderRequest(Long clientId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         try {
-            waiterRequests.add(new WaiterRequest(rtiAmbassador, new Client(rtiAmbassador, clientId)));
+            newOrderRequests.add(new WaiterRequest(rtiAmbassador, new Client(rtiAmbassador, clientId)));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -151,14 +151,14 @@ public class Federate extends AbstractFederate {
     }
 
     protected void informAboutStartedClientServices() {
-        List<WaiterRequest> consideredWaiterRequests = new ArrayList<>();
+        List<WaiterRequest> consideredNewOrderRequests = new ArrayList<>();
 
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        for (WaiterRequest waiterRequest : waiterRequests) {
+        for (WaiterRequest newOrderRequest : newOrderRequests) {
             if(ifIsFreeWaiter()) {
                 try {
-                    Client client = waiterRequest.getClient();
+                    Client client = newOrderRequest.getClient();
 
                     Waiter waiter = getFirstFreeWaiter();
 
@@ -172,7 +172,7 @@ public class Federate extends AbstractFederate {
 
                     startingClientService.sendInteraction();
 
-                    consideredWaiterRequests.add(waiterRequest);
+                    consideredNewOrderRequests.add(newOrderRequest);
 
                     log("Started client service for client with id " + client.getIdentificationNumber());
                 } catch (Exception e) {
@@ -181,30 +181,30 @@ public class Federate extends AbstractFederate {
             }
         }
 
-        if (consideredWaiterRequests.size() > 0) {
-            waiterRequests.removeAll(consideredWaiterRequests);
+        if (consideredNewOrderRequests.size() > 0) {
+            newOrderRequests.removeAll(consideredNewOrderRequests);
         }
     }
 
-    private ClientService findOrder(Long clientId) {
-        for (ClientService clientService : clientsOrders) {
-            if((!clientService.ifDone()) && (clientService.getClient().getIdentificationNumber() == clientId)) {
-                return clientService;
+    private ClientService findClientOrder(Long clientId) {
+        for (ClientService clientOrder : clientsOrders) {
+            if((!clientOrder.ifDone()) && (clientOrder.getClient().getIdentificationNumber() == clientId)) {
+                return clientOrder;
             }
         }
 
         return null;
     }
 
-    protected void addMealToOrder(Long clientId, Long mealId) {
+    protected void addMealToClientOrder(Long clientId, Long mealId) {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        ClientService clientService = findOrder(clientId);
+        ClientService clientOrder = findClientOrder(clientId);
 
         try {
             Meal meal = new Meal(rtiAmbassador, mealId);
 
-            clientService.setMeal(meal);
+            clientOrder.setMeal(meal);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -213,20 +213,20 @@ public class Federate extends AbstractFederate {
     protected void informAboutNewMealRequests() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        for (ClientService clientService : clientsOrders) {
-            if((!clientService.ifDone()) && (clientService.getMeal() != null)) {
-                Client client = clientService.getClient();
+        for (ClientService clientOrder : clientsOrders) {
+            if((!clientOrder.ifDone()) && (clientOrder.getMeal() != null)) {
+                Client client = clientOrder.getClient();
 
-                Meal meal = clientService.getMeal();
+                Meal meal = clientOrder.getMeal();
 
                 try {
                     NewMealRequest newMealRequest = new NewMealRequest(rtiAmbassador, client, meal);
 
                     newMealRequest.sendInteraction();
 
-                    clientService.finishService();
+                    clientOrder.finishService();
 
-                    clientService.getWaiter().setFree();
+                    clientOrder.getWaiter().setFree();
 
                     log("Sent to kitchen request for a meal with id " + meal.getIdentificationNumber() + " for client with id " + client.getIdentificationNumber());
                 } catch (Exception e) {

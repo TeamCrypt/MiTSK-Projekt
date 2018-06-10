@@ -28,7 +28,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 clientId.decode(theParameters.get(federate.getClientCallsWaiterInteractionClassClientIdParameterHandle()));
 
-                federate.addWaiterRequest(clientId.getValue());
+                federate.addNewOrderRequest(clientId.getValue());
 
                 log("Received request for waiter for client with id " + clientId.getValue());
             } catch (Exception exception) {
@@ -44,7 +44,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 mealId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassMealIdParameterHandle()));
 
-                federate.addMealToOrder(clientId.getValue(), mealId.getValue());
+                federate.addMealToClientOrder(clientId.getValue(), mealId.getValue());
 
                 log("Client with id " + clientId.getValue() + " ordered a meal with id " + mealId.getValue());
             } catch (Exception exception) {
