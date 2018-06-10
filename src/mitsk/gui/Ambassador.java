@@ -5,10 +5,9 @@ import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.exceptions.FederateInternalError;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
-import mitsk.gui.Federate;
 
 public class Ambassador extends AbstractFederateAmbassador {
-    private EncoderFactory encoderFactory;
+    private EncoderFactory encoderFactory; // @TODO
 
     Ambassador(AbstractFederate federate) {
         super(federate);
@@ -23,13 +22,11 @@ public class Ambassador extends AbstractFederateAmbassador {
         Federate federate = (Federate) getFederate();
 
         if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
-
+            // @TODO
         } else if (interactionClass.equals(federate.getLeaveFromQueueInteracionClassHandle())) {
-
+            // @TODO
         } else if ((interactionClass.equals(federate.getClientImpatienceInteracionClassHandle()))) {
-
+            // @TODO
         }
-
-
-        }
+    }
 }

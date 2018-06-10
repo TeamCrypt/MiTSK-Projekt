@@ -61,18 +61,20 @@ public class Federate extends AbstractFederate {
     @Override
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
-                (new File("foms/Clients.xml")).toURI().toURL(),
-                (new File("foms/Kitchen.xml")).toURI().toURL(),
-                (new File("foms/Queue.xml")).toURI().toURL(),
-                (new File("foms/Statistics.xml")).toURI().toURL(),
-                (new File("foms/Gui.xml")).toURI().toURL()
-        };    }
+            (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Gui.xml")).toURI().toURL(),
+            (new File("foms/Kitchen.xml")).toURI().toURL(),
+            (new File("foms/Queue.xml")).toURI().toURL(),
+            (new File("foms/Statistics.xml")).toURI().toURL()
+        };
+    }
 
     @Override
     protected URL[] getJoinModules() throws MalformedURLException {
         return new URL[]{
-                (new File("foms/Gui.xml")).toURI().toURL()
-        };    }
+            (new File("foms/Gui.xml")).toURI().toURL()
+        };
+    }
 
     public static void main(String[] args) {
         String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
@@ -99,11 +101,13 @@ public class Federate extends AbstractFederate {
         resignFederation();
     }
 
-    private void sendInteraction() { }
+    private void sendInteraction() {
+        // empty
+    }
 
     @Override
     protected void publish() throws Exception {
-
+        // empty
     }
 
     @Override
