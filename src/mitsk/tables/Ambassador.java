@@ -28,9 +28,11 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
 
-                federate.addClientReceived(clientId.getValue());
+                Long clientIdentificationNumber = clientId.getValue();
 
-                log("Client left queue to go into Tables");
+                federate.addClientReceived(clientIdentificationNumber);
+
+                log("Client " + clientIdentificationNumber + " enters Restaurant");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

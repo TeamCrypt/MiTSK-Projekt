@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Random;
 
 public class Federate extends AbstractFederate {
-    private static final double A = 1.0;
+    private static final double A = 4.0;
 
-    private static final double B = 10.0;
+    private static final double B = 8.0;
 
     private InteractionClassHandle newClientInteractionClassHandle;
 

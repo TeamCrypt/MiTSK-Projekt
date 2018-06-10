@@ -225,6 +225,8 @@ public class Federate extends AbstractFederate {
 
         double freeAfter = randomDouble(A, B);
 
+        List<Client> toRemove = new ArrayList<>();
+
         for (Client client : clientsReceived) {
             for (Table table : tables) {
                 if (table.isFree()) {
@@ -235,15 +237,20 @@ public class Federate extends AbstractFederate {
 
                         clientTakesTable.sendInteraction();
 
-                        clientsReceived.remove(client);
+                        toRemove.add(client);
 
                         log("Client " + client.getIdentificationNumber() + " takes table " + table.getTableId());
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
-                    return;
+
+                    break;
                 }
             }
+        }
+
+        if (toRemove.size() > 0) {
+            clientsReceived.removeAll(toRemove);
         }
     }
 
