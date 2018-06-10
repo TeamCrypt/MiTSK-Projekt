@@ -54,6 +54,8 @@ public class Federate extends AbstractFederate {
 
     private List<TakeMealRequest> takeMealRequests = new ArrayList<>();
 
+    private List<WaiterRequest> giveBillRequests = new ArrayList<>();
+
     private List<ClientService> clientsOrders = new ArrayList<>();
 
     private List<ClientService> clientsPreparedOrders = new ArrayList<>();
@@ -314,6 +316,16 @@ public class Federate extends AbstractFederate {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    protected void addGiveBillRequest(Long clientId) {
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        try {
+            giveBillRequests.add(new WaiterRequest(rtiAmbassador, new Client(rtiAmbassador, clientId)));
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 

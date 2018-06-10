@@ -66,6 +66,18 @@ public class Ambassador extends AbstractFederateAmbassador {
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
+        } else if (interactionClass.equals(federate.getClientAsksForBillInteractionClassHandle())) {
+            try {
+                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                clientId.decode(theParameters.get(federate.getClientAsksForBillInteractionClassClientIdParameterHandle()));
+
+                federate.addGiveBillRequest(clientId.getValue());
+
+                log("Received request for bill for client with id " + clientId.getValue());
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
         }
     }
 }
