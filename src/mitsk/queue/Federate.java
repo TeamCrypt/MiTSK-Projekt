@@ -2,7 +2,6 @@ package mitsk.queue;
 
 import hla.rti1516e.InteractionClassHandle;
 import hla.rti1516e.ParameterHandle;
-import hla.rti1516e.ParameterHandleValueMap;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
@@ -10,7 +9,6 @@ import mitsk.queue.interaction.ClientImpatience;
 import mitsk.queue.interaction.LeaveFromQueue;
 import mitsk.queue.interaction.NewInQueue;
 import mitsk.queue.object.Client;
-import mitsk.tables.interaction.FreeTablesAvailable;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -24,17 +22,11 @@ public class Federate extends AbstractFederate {
 
     private static final double B = 10.0;
 
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle newClientInteractionClassHandle;
 
     private ParameterHandle newClientInteractionClassClientIdParameterHandle;
 
     private InteractionClassHandle freeTablesAvailableInteractionClassHandle;
-
-    private InteractionClassHandle leaveFromQueueInteractionClassHandle;
-
-    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
     private List<Client> newInQueue = new ArrayList<>();
 
@@ -42,7 +34,7 @@ public class Federate extends AbstractFederate {
 
     private Random random = new Random();
 
-    protected boolean permissionToSendClient = false;
+    private int allowedToEnter = 0;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -58,6 +50,8 @@ public class Federate extends AbstractFederate {
                 newInQueue.sendInteraction();
 
                 toRemove.add(client);
+
+                log("Client " + client.getIdentificationNumber() + " with impatience " + client.getImpatience() + " joins to Queue");
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -69,7 +63,7 @@ public class Federate extends AbstractFederate {
     }
 
     void addClientToQueue(Long clientId) throws Exception {
-        Client client = new Client(getRTIAmbassador(), clientId, randomDouble(A, B));
+        Client client = new Client(getRTIAmbassador(), clientId, getFederateAmbassador().getFederateTime() + randomDouble(A, B));
 
         queue.add(client);
 
@@ -129,12 +123,7 @@ public class Federate extends AbstractFederate {
 
         rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience"));
 
-        leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
-
-        rtiAmbassador.publishInteractionClass(leaveFromQueueInteractionClassHandle);
-
-        leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
-
+        rtiAmbassador.publishInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue"));
     }
 
     private double randomDouble(double a, double b) { // Generates random double in range [a, b]
@@ -154,6 +143,8 @@ public class Federate extends AbstractFederate {
                     clientImpatience.sendInteraction();
 
                     toRemove.add(client);
+
+                    log("Client " + client.getIdentificationNumber() + " impatience");
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -168,17 +159,20 @@ public class Federate extends AbstractFederate {
     private void leaveFromQueue() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        if (permissionToSendClient && !queue.isEmpty()) {
+        while ((allowedToEnter > 0) && !queue.isEmpty()) {
             try {
                 Client client = queue.remove(0);
 
                 LeaveFromQueue leaveFromQueue = new LeaveFromQueue(rtiAmbassador, client);
 
                 leaveFromQueue.sendInteraction();
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                log("Client " + client.getIdentificationNumber() + " enters to the Restaurant");
+            } catch (Exception exception) {
+                exception.printStackTrace();
             }
-            permissionToSendClient = false;
+
+            --allowedToEnter;
         }
     }
 
@@ -200,23 +194,31 @@ public class Federate extends AbstractFederate {
     private void sendInteraction() throws Exception {
         addClientsToQueue();
 
-        removeImpatientClients();
-
         leaveFromQueue();
-        }
+
+        removeImpatientClients();
+    }
 
     @Override
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        newClientInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient");
+        { // NewClient
+            newClientInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient");
 
-        rtiAmbassador.subscribeInteractionClass(newClientInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(newClientInteractionClassHandle);
 
-        newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
+            newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
+        }
 
-        freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
+        { // FreeTablesAvailable
+            freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
 
-        rtiAmbassador.subscribeInteractionClass(freeTablesAvailableInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(freeTablesAvailableInteractionClassHandle);
+        }
+    }
+
+    void allowToEnter() {
+        ++allowedToEnter;
     }
 }

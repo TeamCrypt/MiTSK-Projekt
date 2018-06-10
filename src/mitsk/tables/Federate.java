@@ -19,19 +19,17 @@ import java.util.List;
 import java.util.Random;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private static final int NUMBER_OF_TABLES = 3;
 
     private static final double A = 16.0;
 
     private static final double B = 32.0;
 
-    protected List<Table> tables;
+    private List<Table> tables;
 
-    protected List<Client> clientsReceived = new ArrayList<>();
+    private List<Client> clientsReceived = new ArrayList<>();
 
-    private int numberOfTables = NUMBER_OF_TABLES;
+    private int numberOfTables;
 
     private Random random = new Random();
 
@@ -98,7 +96,7 @@ public class Federate extends AbstractFederate {
     }
 
     InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
-        return  leaveFromQueueInteractionClassHandle;
+        return leaveFromQueueInteractionClassHandle;
     }
 
     ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
@@ -159,29 +157,31 @@ public class Federate extends AbstractFederate {
     protected void publish() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        // ClientTakesTable
-        clientTakesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable");
+        { // ClientTakesTable
+            clientTakesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable");
 
-        rtiAmbassador.publishInteractionClass(clientTakesTableInteractionClassHandle);
+            rtiAmbassador.publishInteractionClass(clientTakesTableInteractionClassHandle);
 
-        clientTakesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
+            clientTakesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
 
-        clientTakesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+            clientTakesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+        }
 
-        // ClientLeavesTable
-        clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
+        { // ClientLeavesTable
+            clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
 
-        rtiAmbassador.publishInteractionClass(clientLeavesTableInteractionClassHandle);
+            rtiAmbassador.publishInteractionClass(clientLeavesTableInteractionClassHandle);
 
-        clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
+            clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
 
-        clientLeavesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+            clientLeavesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+        }
 
-        // FreeTablesAvailable
+        { // FreeTablesAvailable
+            freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
 
-        freeTablesAvailableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.FreeTablesAvailable");
-
-        rtiAmbassador.publishInteractionClass(freeTablesAvailableInteractionClassHandle);
+            rtiAmbassador.publishInteractionClass(freeTablesAvailableInteractionClassHandle);
+        }
     }
 
     @Override
@@ -216,14 +216,14 @@ public class Federate extends AbstractFederate {
         clientTakesTable();
     }
 
-    public void addClientReceived(Long clientId) throws Exception {
+    void addClientReceived(Long clientId) throws Exception {
         clientsReceived.add(new Client(getRTIAmbassador(), clientId));
     }
 
-    public void clientTakesTable() {
+    private void clientTakesTable() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        double freeAfter =  randomDouble(A, B);
+        double freeAfter = randomDouble(A, B);
 
         for (Client client : clientsReceived) {
             for (Table table : tables) {
@@ -236,7 +236,9 @@ public class Federate extends AbstractFederate {
                         clientTakesTable.sendInteraction();
 
                         clientsReceived.remove(client);
-                    }  catch (Exception exception) {
+
+                        log("Client " + client.getIdentificationNumber() + " takes table " + table.getTableId());
+                    } catch (Exception exception) {
                         exception.printStackTrace();
                     }
                     return;
@@ -245,19 +247,19 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    public void clientLeavesTable() {
+    private void clientLeavesTable() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
         double federationTime = getFederateAmbassador().getFederateTime();
 
         for (Table table : tables) {
-            if(table.getFreeAt() <= federationTime && !table.isFree()) {
+            if ((table.getFreeAt() <= federationTime) && !table.isFree()) {
                 try {
-                    table.setFree();
-
                     ClientLeavesTable clientLeavesTable = new ClientLeavesTable(rtiAmbassador, table);
 
                     clientLeavesTable.sendInteraction();
+
+                    table.setFree();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -265,14 +267,15 @@ public class Federate extends AbstractFederate {
         }
     }
 
-    public void freeTablesAvailable() {
+    private void freeTablesAvailable() {
         for (Table table : tables) {
-            if (table.isFree()) {
+            if (table.isFree() && !table.isNotified()) {
                 try {
                     FreeTablesAvailable freeTablesAvailable = new FreeTablesAvailable(getRTIAmbassador());
 
                     freeTablesAvailable.sendInteraction();
 
+                    table.setNotified();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -290,18 +293,20 @@ public class Federate extends AbstractFederate {
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
+        { // LeaveFromQueue
+            leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
 
-        rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
+            rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
 
-        leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
+            leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
+        }
 
+        { // ClientImpatience
+            clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
 
-        clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
+            rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
 
-        rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
-
-        clientImpatienceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
-
+            clientImpatienceInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
+        }
     }
 }

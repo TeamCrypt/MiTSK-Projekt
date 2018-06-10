@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Queue;
 
 public class Federate extends AbstractFederate {
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle clientImpatienceInteractionClassHandle;
 
     private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;

@@ -17,8 +17,6 @@ public class Federate extends AbstractFederate {
 
     private static final double B = 10.0;
 
-    private static final int ITERATIONS = 20;
-
     private HashMap<Long, Client> clients = new HashMap<>();
 
     private Random random = new Random();
@@ -54,7 +52,6 @@ public class Federate extends AbstractFederate {
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL(),
             (new File("foms/Tables.xml")).toURI().toURL()
-
         };
     }
 

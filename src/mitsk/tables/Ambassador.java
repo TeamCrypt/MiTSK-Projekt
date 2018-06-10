@@ -22,7 +22,7 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         Federate federate = (Federate) getFederate();
 
-        if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle()) ) {
+        if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
             try {
                 HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
@@ -31,7 +31,6 @@ public class Ambassador extends AbstractFederateAmbassador {
                 federate.addClientReceived(clientId.getValue());
 
                 log("Client left queue to go into Tables");
-
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

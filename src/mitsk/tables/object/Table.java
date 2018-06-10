@@ -16,7 +16,9 @@ public class Table extends AbstractObject {
 
     private AttributeHandle isFreeAttributeClassHandle;
 
-    protected double freeAt;
+    private double freeAt;
+
+    private boolean isNotified = false;
 
     public Table(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
@@ -26,6 +28,8 @@ public class Table extends AbstractObject {
 
     public void setFree() {
         client = null;
+
+        isNotified = false;
     }
 
     public void setOccupied(Client client, double freeAt) {
@@ -60,5 +64,13 @@ public class Table extends AbstractObject {
         tableObjectClassHandle = getRtiAmbassador().getObjectClassHandle("HLAObjectRoot.Table");
 
 //        isFreeAttributeClassHandle = getRtiAmbassador().getAttributeHandle(tableObjectClassHandle, "IsFree"); // @TODO hla.rti1516e.exceptions.NameNotFound: name: IsFree
+    }
+
+    public boolean isNotified() {
+        return isNotified;
+    }
+
+    public void setNotified() {
+        isNotified = true;
     }
 }

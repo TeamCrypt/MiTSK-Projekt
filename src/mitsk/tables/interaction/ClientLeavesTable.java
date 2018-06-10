@@ -4,7 +4,6 @@ import hla.rti1516e.*;
 import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.encoding.HLAinteger64BE;
 import mitsk.AbstractInteraction;
-import mitsk.tables.object.Client;
 import mitsk.tables.object.Table;
 
 public class ClientLeavesTable extends AbstractInteraction {

@@ -22,8 +22,6 @@ public class Federate extends AbstractFederate {
 
     private static final double B = 32.0;
 
-    private static final int ITERATIONS = 20;
-
     private InteractionClassHandle newMealRequestInteractionClassHandle;
 
     private ParameterHandle newMealRequestInteractionClassClientIdParameterHandle;

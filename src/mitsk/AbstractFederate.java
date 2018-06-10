@@ -18,6 +18,8 @@ import java.net.URL;
 public abstract class AbstractFederate {
     public static final String READY_TO_RUN = "ReadyToRun";
 
+    protected static final int ITERATIONS = 60;
+
     private String federationName;
 
     private RTIambassador rtiAmbassador;

@@ -28,16 +28,18 @@ public class Ambassador extends AbstractFederateAmbassador {
 
                 clientId.decode(theParameters.get(federate.getNewClientInteractionClassClientIdParameterHandle()));
 
-                federate.addClientToQueue(clientId.getValue());
+                Long clientIdentificationNumber = clientId.getValue();
 
-                log("Received client");
+                federate.addClientToQueue(clientIdentificationNumber);
+
+                log("Received Client " + clientIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         } else if (interactionClass.equals((federate.getFreeTablesAvailableInteractionClassHandle()))) {
-            federate.permissionToSendClient = true;
+            federate.allowToEnter();
 
-            log("Received permission to send Client");
+            log("Free table for Client in the Restaurant");
         }
     }
 }
