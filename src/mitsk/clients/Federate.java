@@ -1,10 +1,13 @@
 package mitsk.clients;
 
+import hla.rti1516e.InteractionClassHandle;
+import hla.rti1516e.ParameterHandle;
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 import mitsk.clients.interaction.NewClient;
 import mitsk.clients.object.Client;
+import mitsk.clients.object.Table;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -17,6 +20,12 @@ public class Federate extends AbstractFederate {
     private static final double B = 8.0;
 
     private HashMap<Long, Client> clients = new HashMap<>();
+
+    private InteractionClassHandle clientTakesTableInteractionClassHandle;
+
+    private ParameterHandle clientTakesTableInteractionClassClientIdParameterHandle;
+
+    private ParameterHandle clientTakesTableInteractionClassTableIdParameterHandle;
 
     private double nextClientAt = 0.0;
 
@@ -47,6 +56,28 @@ public class Federate extends AbstractFederate {
                 exception.printStackTrace();
             }
         }
+    }
+
+    void clientTakesTable(Long clientIdentificationNumber, Long tableIdentificationNumber) {
+        if (clients.containsKey(clientIdentificationNumber)) {
+            try {
+                clients.get(clientIdentificationNumber).takeTable(new Table(getRTIAmbassador(), tableIdentificationNumber));
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    InteractionClassHandle getClientTakesTableInteractionClassHandle() {
+        return clientTakesTableInteractionClassHandle;
+    }
+
+    ParameterHandle getClientTakesTableInteractionClassClientIdParameterHandle() {
+        return clientTakesTableInteractionClassClientIdParameterHandle;
+    }
+
+    ParameterHandle getClientTakesTableInteractionClassTableIdParameterHandle() {
+        return clientTakesTableInteractionClassTableIdParameterHandle;
     }
 
     @Override
@@ -109,6 +140,16 @@ public class Federate extends AbstractFederate {
 
     @Override
     protected void subscribe() throws Exception {
-        // empty
+        RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        { // ClientTakesTable
+            clientTakesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientTakesTable");
+
+            rtiAmbassador.subscribeInteractionClass(clientTakesTableInteractionClassHandle);
+
+            clientTakesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "clientId");
+
+            clientTakesTableInteractionClassTableIdParameterHandle = rtiAmbassador.getParameterHandle(clientTakesTableInteractionClassHandle, "tableId");
+        }
     }
 }

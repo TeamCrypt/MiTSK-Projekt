@@ -162,9 +162,7 @@ public class Federate extends AbstractFederate {
                     try {
                         table.setOccupied(client, freeAfter);
 
-                        ClientTakesTable clientTakesTable = new ClientTakesTable(rtiAmbassador, client, table);
-
-                        clientTakesTable.sendInteraction();
+                        new ClientTakesTable(rtiAmbassador, client, table).sendInteraction();
 
                         toRemove.add(client);
 

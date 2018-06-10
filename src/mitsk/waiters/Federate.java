@@ -491,9 +491,13 @@ public class Federate extends AbstractFederate {
 
     public void sendInteraction() {
         informAboutStartedClientServices();
+
         informAboutNewMealRequests();
+
         informAboutTakenFood();
+
         informAboutGavenMeals();
+
         informAboutStartedPaymentServices();
     }
 

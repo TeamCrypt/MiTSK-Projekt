@@ -14,6 +14,8 @@ public class Client extends AbstractObject {
 
     private ObjectInstanceHandle objectInstanceHandle;
 
+    private Table table;
+
     public Client(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
 
@@ -38,5 +40,9 @@ public class Client extends AbstractObject {
     @Override
     protected void setHandles() throws Exception {
         clientObjectClassHandle = getRtiAmbassador().getObjectClassHandle("HLAobjectRoot.Client");
+    }
+
+    public void takeTable(Table table) {
+        this.table = table;
     }
 }
