@@ -9,6 +9,7 @@ import hla.rti1516e.exceptions.RTIexception;
 import hla.rti1516e.time.HLAfloat64Interval;
 import hla.rti1516e.time.HLAfloat64Time;
 import hla.rti1516e.time.HLAfloat64TimeFactory;
+import org.jgroups.TimeoutException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -158,7 +159,12 @@ public abstract class AbstractFederate {
     }
 
     protected void resignFederation() throws Exception {
-        rtiAmbassador.resignFederationExecution(ResignAction.DELETE_OBJECTS);
+        try {
+            rtiAmbassador.resignFederationExecution(ResignAction.DELETE_OBJECTS);
+        } catch (TimeoutException exception) {
+            exception.printStackTrace();
+        }
+
         log("Resigned from federation");
 
         destroyFederation();
