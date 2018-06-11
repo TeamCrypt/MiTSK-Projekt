@@ -16,14 +16,28 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         Federate federate = (Federate) getFederate();
 
+        GUI gui = federate.getGui();
+
         if (interactionClass.equals(federate.getNewClientInteractionClassHandle())) {
-            federate.getGui().addClient();
+            log("New Client");
+
+            gui.addClient();
         } else if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
-            // @TODO
+            log("Client enters to Queue");
+
+            gui.addToQueue();
         } else if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
-            // @TODO
-        } else if ((interactionClass.equals(federate.getClientImpatienceInteractionClassHandle()))) {
-            // @TODO
+            log("Client leaves from Queue");
+
+            gui.removeFromQueue();
+        } else if (interactionClass.equals(federate.getClientImpatienceInteractionClassHandle())) {
+            log("Client are impatient");
+
+            gui.addImpatientClient();
+        } else if (interactionClass.equals(federate.getClientLeavesTableInteractionClassHandle())) {
+            log("Client leaves Table");
+
+            gui.removeClient();
         }
     }
 }

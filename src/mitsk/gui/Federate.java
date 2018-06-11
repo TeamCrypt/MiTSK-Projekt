@@ -9,40 +9,27 @@ import mitsk.AbstractFederateAmbassador;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 public class Federate extends AbstractFederate {
     private GUI gui = new GUI();
 
     private InteractionClassHandle clientImpatienceInteractionClassHandle;
 
-    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
-
     private InteractionClassHandle clientLeavesTableInteractionClassHandle;
-
-    private ParameterHandle clientLeavesTableInteractionClassClientIdParameterHandle;
 
     private InteractionClassHandle newClientInteractionClassHandle;
 
-    private ParameterHandle newClientInteractionClassClientIdParameterHandle;
-
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
-    private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
-
     private InteractionClassHandle leaveFromQueueInteractionClassHandle;
-
-    private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
     }
 
     InteractionClassHandle getClientImpatienceInteractionClassHandle() {
-        return leaveFromQueueInteractionClassHandle;
-    }
-
-    ParameterHandle getClientImpatienceInteractionClassClientIdParameterHandle() {
-        return clientImpatienceInteractionClassClientIdParameterHandle;
+        return clientImpatienceInteractionClassHandle;
     }
 
     InteractionClassHandle getClientLeavesTableInteractionClassHandle() {
@@ -53,24 +40,12 @@ public class Federate extends AbstractFederate {
         return leaveFromQueueInteractionClassHandle;
     }
 
-    ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
-        return leaveFromQueueInteractionClassClientIdParameterHandle;
-    }
-
-    public InteractionClassHandle getNewClientInteractionClassHandle() {
+    InteractionClassHandle getNewClientInteractionClassHandle() {
         return newClientInteractionClassHandle;
-    }
-
-    ParameterHandle getNewClientInteractionClassClientIdParameterHandle() {
-        return newClientInteractionClassClientIdParameterHandle;
     }
 
     InteractionClassHandle getNewInQueueInteractionClassHandle() {
         return newInQueueInteractionClassHandle;
-    }
-
-    ParameterHandle getNewInQueueInteractionClassClientIdParameterHandle() {
-        return newInQueueInteractionClassClientIdParameterHandle;
     }
 
     @Override
@@ -113,6 +88,14 @@ public class Federate extends AbstractFederate {
     }
 
     @Override
+    protected void resignFederation() throws Exception {
+        super.resignFederation();
+
+        gui.setVisible(false);
+        gui.dispose();
+    }
+
+    @Override
     public void run() throws Exception {
         gui.run();
 
@@ -124,6 +107,8 @@ public class Federate extends AbstractFederate {
             advanceTime(1.0);
 
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
+
+            TimeUnit.MILLISECONDS.sleep(500);
         }
 
         resignFederation();
@@ -146,40 +131,30 @@ public class Federate extends AbstractFederate {
             newClientInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient");
 
             rtiAmbassador.subscribeInteractionClass(newClientInteractionClassHandle);
-
-            newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
         }
 
         { // NewInQueue
             newInQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
 
             rtiAmbassador.subscribeInteractionClass(newInQueueInteractionClassHandle);
-
-            newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newInQueueInteractionClassHandle, "clientId");
         }
 
         { // LeaveFromQueue
             leaveFromQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue");
 
             rtiAmbassador.subscribeInteractionClass(leaveFromQueueInteractionClassHandle);
-
-            leaveFromQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(leaveFromQueueInteractionClassHandle, "clientId");
         }
 
         { // ClientImpatience
             clientImpatienceInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience");
 
             rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
-
-            newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
         }
 
         { // ClientLeavesTable
             clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
 
             rtiAmbassador.subscribeInteractionClass(clientLeavesTableInteractionClassHandle);
-
-            clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientLeavesTableInteractionClassHandle, "clientId");
         }
     }
 }

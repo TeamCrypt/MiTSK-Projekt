@@ -13,6 +13,10 @@ public class GUI extends JFrame {
 
     private JTextField impatientTextField = new JTextField(impatient.toString());
 
+    private Integer inQueue = 0;
+
+    private JTextField inQueueTextField = new JTextField(inQueue.toString());
+
     GUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -52,11 +56,55 @@ public class GUI extends JFrame {
             add(impatientPanel);
         }
 
+        {
+            inQueueTextField.setEditable(false);
+            inQueueTextField.setHorizontalAlignment(JTextField.CENTER);
+
+            JLabel inQueueLabel = new JLabel("Queue");
+            inQueueLabel.setLabelFor(inQueueTextField);
+            inQueueLabel.setVerticalTextPosition(JLabel.CENTER);
+            inQueueLabel.setHorizontalTextPosition(JLabel.CENTER);
+
+            JPanel inQueuePanel = new JPanel(new GridLayout(2, 1));
+            inQueuePanel.add(inQueueLabel);
+            inQueuePanel.add(inQueueTextField);
+            inQueuePanel.setBorder(new EmptyBorder(16, 16, 16, 16));
+            add(inQueuePanel);
+        }
+
         setLayout(new GridLayout(1, 3));
     }
 
     void addClient() {
         ++clients;
+
+        updateAll();
+    }
+
+    void addImpatientClient() {
+        removeClient();
+
+        removeFromQueue();
+
+        ++impatient;
+
+        updateAll();
+    }
+
+    void addToQueue() {
+        ++inQueue;
+
+        updateAll();
+    }
+
+    void removeClient() {
+        --clients;
+
+        updateAll();
+    }
+
+    void removeFromQueue() {
+        --inQueue;
 
         updateAll();
     }
@@ -69,6 +117,10 @@ public class GUI extends JFrame {
 
     private void updateAll() {
         clientsTextField.setText(clients.toString());
+
+        impatientTextField.setText(impatient.toString());
+
+        inQueueTextField.setText(inQueue.toString());
 
         validate();
 
