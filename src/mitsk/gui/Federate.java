@@ -15,6 +15,10 @@ public class Federate extends AbstractFederate {
 
     private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
 
+    private InteractionClassHandle clientLeavesTableInteractionClassHandle;
+
+    private ParameterHandle clientLeavesTableInteractionClassClientIdParameterHandle;
+
     private InteractionClassHandle newClientInteractionClassHandle;
 
     private ParameterHandle newClientInteractionClassClientIdParameterHandle;
@@ -148,6 +152,14 @@ public class Federate extends AbstractFederate {
             rtiAmbassador.subscribeInteractionClass(clientImpatienceInteractionClassHandle);
 
             newInQueueInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientImpatienceInteractionClassHandle, "clientId");
+        }
+
+        { // ClientLeavesTable
+            clientLeavesTableInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientLeavesTable");
+
+            rtiAmbassador.subscribeInteractionClass(clientLeavesTableInteractionClassHandle);
+
+            clientLeavesTableInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientLeavesTableInteractionClassHandle, "clientId");
         }
     }
 }
