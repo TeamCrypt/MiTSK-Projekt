@@ -13,7 +13,7 @@ public class GUI extends JFrame {
 
     private JTextField impatientTextField = new JTextField(impatient.toString());
 
-    public GUI() {
+    GUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setLocationRelativeTo(null);
@@ -55,9 +55,25 @@ public class GUI extends JFrame {
         setLayout(new GridLayout(1, 3));
     }
 
+    void addClient() {
+        ++clients;
+
+        updateAll();
+    }
+
     public void run() {
         pack();
 
         setVisible(true);
+    }
+
+    private void updateAll() {
+        clientsTextField.setText(clients.toString());
+
+        validate();
+
+        repaint();
+
+        pack();
     }
 }

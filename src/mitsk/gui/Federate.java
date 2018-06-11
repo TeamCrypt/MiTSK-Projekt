@@ -37,12 +37,16 @@ public class Federate extends AbstractFederate {
         super(federationName);
     }
 
-    InteractionClassHandle getNewInQueueInteractionClassHandle() {
-        return newInQueueInteractionClassHandle;
+    InteractionClassHandle getClientImpatienceInteractionClassHandle() {
+        return leaveFromQueueInteractionClassHandle;
     }
 
-    ParameterHandle getNewInQueueInteractionClassClientIdParameterHandle() {
-        return newInQueueInteractionClassClientIdParameterHandle;
+    ParameterHandle getClientImpatienceInteractionClassClientIdParameterHandle() {
+        return clientImpatienceInteractionClassClientIdParameterHandle;
+    }
+
+    InteractionClassHandle getClientLeavesTableInteractionClassHandle() {
+        return clientLeavesTableInteractionClassHandle;
     }
 
     InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
@@ -53,12 +57,20 @@ public class Federate extends AbstractFederate {
         return leaveFromQueueInteractionClassClientIdParameterHandle;
     }
 
-    InteractionClassHandle getClientImpatienceInteractionClassHandle() {
-        return leaveFromQueueInteractionClassHandle;
+    public InteractionClassHandle getNewClientInteractionClassHandle() {
+        return newClientInteractionClassHandle;
     }
 
-    ParameterHandle getClientImpatienceInteractionClassClientIdParameterHandle() {
-        return clientImpatienceInteractionClassClientIdParameterHandle;
+    ParameterHandle getNewClientInteractionClassClientIdParameterHandle() {
+        return newClientInteractionClassClientIdParameterHandle;
+    }
+
+    InteractionClassHandle getNewInQueueInteractionClassHandle() {
+        return newInQueueInteractionClassHandle;
+    }
+
+    ParameterHandle getNewInQueueInteractionClassClientIdParameterHandle() {
+        return newInQueueInteractionClassClientIdParameterHandle;
     }
 
     @Override
@@ -77,6 +89,10 @@ public class Federate extends AbstractFederate {
             (new File("foms/Tables.xml")).toURI().toURL(),
             (new File("foms/Waiters.xml")).toURI().toURL()
         };
+    }
+
+    public GUI getGui() {
+        return gui;
     }
 
     @Override

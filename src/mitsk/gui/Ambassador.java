@@ -1,18 +1,13 @@
 package mitsk.gui;
 
 import hla.rti1516e.*;
-import hla.rti1516e.encoding.EncoderFactory;
 import hla.rti1516e.exceptions.FederateInternalError;
 import mitsk.AbstractFederate;
 import mitsk.AbstractFederateAmbassador;
 
 public class Ambassador extends AbstractFederateAmbassador {
-    private EncoderFactory encoderFactory; // @TODO
-
     Ambassador(AbstractFederate federate) {
         super(federate);
-
-        encoderFactory = getFederate().getEncoderFactory();
     }
 
     @Override
@@ -21,7 +16,9 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         Federate federate = (Federate) getFederate();
 
-        if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
+        if (interactionClass.equals(federate.getNewClientInteractionClassHandle())) {
+            federate.getGui().addClient();
+        } else if (interactionClass.equals(federate.getNewInQueueInteractionClassHandle())) {
             // @TODO
         } else if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
             // @TODO
