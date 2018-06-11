@@ -108,9 +108,9 @@ public class Federate extends AbstractFederate {
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }
 
-        resignFederation();
-
         log("Estimate time in queue: " + getEstimateTime());
+
+        resignFederation();
     }
 
     private double getEstimateTime() {
