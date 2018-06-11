@@ -11,6 +11,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Federate extends AbstractFederate {
+    private InteractionClassHandle clientImpatienceInteractionClassHandle;
+
+    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
+
+    private InteractionClassHandle newClientInteractionClassHandle;
+
+    private ParameterHandle newClientInteractionClassClientIdParameterHandle;
+
     private InteractionClassHandle newInQueueInteractionClassHandle;
 
     private ParameterHandle newInQueueInteractionClassClientIdParameterHandle;
@@ -18,10 +26,6 @@ public class Federate extends AbstractFederate {
     private InteractionClassHandle leaveFromQueueInteractionClassHandle;
 
     private ParameterHandle leaveFromQueueInteractionClassClientIdParameterHandle;
-
-    private InteractionClassHandle clientImpatienceInteractionClassHandle;
-
-    private ParameterHandle clientImpatienceInteractionClassClientIdParameterHandle;
 
     public Federate(String federationName) throws Exception {
         super(federationName);
@@ -113,6 +117,14 @@ public class Federate extends AbstractFederate {
     @Override
     protected void subscribe() throws Exception {
         RTIambassador rtiAmbassador = getRTIAmbassador();
+
+        { // NewClient
+            newClientInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient");
+
+            rtiAmbassador.subscribeInteractionClass(newClientInteractionClassHandle);
+
+            newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
+        }
 
         { // NewInQueue
             newInQueueInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewInQueue");
