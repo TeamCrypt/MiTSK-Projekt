@@ -30,19 +30,31 @@ public class TakeFood extends AbstractInteraction {
         this.meal = meal;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public Meal getMeal() {
+        return meal;
+    }
+
     @Override
     public void sendInteraction() throws Exception {
         RTIambassador rtiAmbassador = getRtiAmbassador();
 
         ParameterHandleValueMap parameters = rtiAmbassador.getParameterHandleValueMapFactory().create(2);
 
-        HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
+        { // clientId
+            HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
 
-        parameters.put(takeFoodInteractionClassClientIdParameterHandle, clientId.toByteArray());
+            parameters.put(takeFoodInteractionClassClientIdParameterHandle, clientId.toByteArray());
+        }
 
-        HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE(meal.getIdentificationNumber());
+        { // mealId
+            HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE(meal.getIdentificationNumber());
 
-        parameters.put(takeFoodInteractionClassMealIdParameterHandle, mealId.toByteArray());
+            parameters.put(takeFoodInteractionClassMealIdParameterHandle, mealId.toByteArray());
+        }
 
         rtiAmbassador.sendInteraction(takeFoodInteractionClassHandle, parameters, generateTag());
     }

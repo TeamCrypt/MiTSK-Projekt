@@ -15,7 +15,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Federate extends AbstractFederate {
     private static final int NUMBER_OF_TABLES = 3;
@@ -26,9 +28,15 @@ public class Federate extends AbstractFederate {
 
     private List<Table> tables;
 
+    private Map<Long, Client> clients = new HashMap<>();
+
     private List<Client> clientsReceived = new ArrayList<>();
 
     private int numberOfTables;
+
+    private InteractionClassHandle clientWantsToLeaveInteractionClassHandle;
+
+    private ParameterHandle clientWantsToLeaveInteractionClassClientIdParameterHandle;
 
     private InteractionClassHandle leaveFromQueueInteractionClassHandle;
 
@@ -50,12 +58,14 @@ public class Federate extends AbstractFederate {
         createTablesList();
     }
 
-    InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
-        return leaveFromQueueInteractionClassHandle;
-    }
+    void addClient(Long clientIdentificationNumber) throws Exception {
+        Client client = new Client(getRTIAmbassador(), clientIdentificationNumber);
 
-    ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
-        return leaveFromQueueInteractionClassClientIdParameterHandle;
+        clients.put(client.getIdentificationNumber(), client);
+
+        clientsReceived.add(client);
+
+        log("Client " + client.getIdentificationNumber() + " enters Restaurant");
     }
 
     private void createTablesList() throws Exception {
@@ -71,14 +81,24 @@ public class Federate extends AbstractFederate {
         return new Ambassador(this);
     }
 
+    InteractionClassHandle getClientWantsToLeaveInteractionClassHandle() {
+        return clientWantsToLeaveInteractionClassHandle;
+    }
+
+    ParameterHandle getClientWantsToLeaveInteractionClassClientIdParameterHandle() {
+        return clientWantsToLeaveInteractionClassClientIdParameterHandle;
+    }
+
     @Override
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
+            (new File("foms/Gui.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
             (new File("foms/Statistics.xml")).toURI().toURL(),
-            (new File("foms/Tables.xml")).toURI().toURL()
+            (new File("foms/Tables.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL()
         };
     }
 
@@ -89,6 +109,13 @@ public class Federate extends AbstractFederate {
         };
     }
 
+    InteractionClassHandle getLeaveFromQueueInteractionClassHandle() {
+        return leaveFromQueueInteractionClassHandle;
+    }
+
+    ParameterHandle getLeaveFromQueueInteractionClassClientIdParameterHandle() {
+        return leaveFromQueueInteractionClassClientIdParameterHandle;
+    }
 
     public static void main(String[] args) {
         String federationName = args.length > 0 ? args[0] : "RestaurantFederation";
@@ -97,6 +124,16 @@ public class Federate extends AbstractFederate {
             new Federate(federationName).run();
         } catch (Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    void nextClientToLeave(Long clientIdentificationNumber) {
+        if (clients.containsKey(clientIdentificationNumber)) {
+            Client client = clients.get(clientIdentificationNumber);
+
+            client.wantsToLeave();
+
+            log("Client " + client.getIdentificationNumber() + " wants to leave");
         }
     }
 
@@ -143,14 +180,8 @@ public class Federate extends AbstractFederate {
         clientTakesTable();
     }
 
-    void addClientReceived(Long clientId) throws Exception {
-        clientsReceived.add(new Client(getRTIAmbassador(), clientId));
-    }
-
     private void clientTakesTable() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
-
-        double freeAfter = randomDouble(A, B);
 
         List<Client> toRemove = new ArrayList<>();
 
@@ -158,15 +189,13 @@ public class Federate extends AbstractFederate {
             for (Table table : tables) {
                 if (table.isFree()) {
                     try {
-                        table.setOccupied(client, freeAfter);
+                        table.setOccupied(client);
 
-                        ClientTakesTable clientTakesTable = new ClientTakesTable(rtiAmbassador, client, table);
-
-                        clientTakesTable.sendInteraction();
+                        new ClientTakesTable(rtiAmbassador, client, table).sendInteraction();
 
                         toRemove.add(client);
 
-                        log("Client " + client.getIdentificationNumber() + " takes table " + table.getTableId());
+                        log("Client " + client.getIdentificationNumber() + " takes Table " + table.getIdentificationNumber());
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
@@ -184,16 +213,20 @@ public class Federate extends AbstractFederate {
     private void clientLeavesTable() {
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
-        double federationTime = getFederateAmbassador().getFederateTime();
-
         for (Table table : tables) {
-            if ((table.getFreeAt() <= federationTime) && !table.isFree()) {
+            if (!table.isFree() && table.getClient().isWantsToLeave()) {
                 try {
+                    Client client = table.getClient();
+
                     ClientLeavesTable clientLeavesTable = new ClientLeavesTable(rtiAmbassador, table);
 
                     clientLeavesTable.sendInteraction();
 
                     table.setFree();
+
+                    clients.remove(client.getIdentificationNumber());
+
+                    log("Client " + client.getIdentificationNumber() + " leaves Table " + table.getIdentificationNumber());
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
@@ -205,9 +238,7 @@ public class Federate extends AbstractFederate {
         for (Table table : tables) {
             if (table.isFree() && !table.isNotified()) {
                 try {
-                    FreeTablesAvailable freeTablesAvailable = new FreeTablesAvailable(getRTIAmbassador());
-
-                    freeTablesAvailable.sendInteraction();
+                    new FreeTablesAvailable(getRTIAmbassador()).sendInteraction();
 
                     table.setNotified();
                 } catch (Exception exception) {
@@ -231,6 +262,14 @@ public class Federate extends AbstractFederate {
 
         { // ClientImpatience
             rtiAmbassador.subscribeInteractionClass(rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.LeaveFromQueue.ClientImpatience")); // Otherwise RTI throws exception
+        }
+
+        { // ClientWantsToLeave
+            clientWantsToLeaveInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientWantsToLeave");
+
+            rtiAmbassador.subscribeInteractionClass(clientWantsToLeaveInteractionClassHandle);
+
+            clientWantsToLeaveInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientWantsToLeaveInteractionClassHandle, "clientId");
         }
     }
 }

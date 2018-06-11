@@ -54,10 +54,12 @@ public class Federate extends AbstractFederate {
     protected URL[] getFederationModules() throws MalformedURLException {
         return new URL[]{
             (new File("foms/Clients.xml")).toURI().toURL(),
-            (new File("foms/Waiters.xml")).toURI().toURL(),
+            (new File("foms/Gui.xml")).toURI().toURL(),
             (new File("foms/Kitchen.xml")).toURI().toURL(),
             (new File("foms/Queue.xml")).toURI().toURL(),
-            (new File("foms/Statistics.xml")).toURI().toURL()
+            (new File("foms/Statistics.xml")).toURI().toURL(),
+            (new File("foms/Tables.xml")).toURI().toURL(),
+            (new File("foms/Waiters.xml")).toURI().toURL()
         };
     }
 
@@ -106,9 +108,9 @@ public class Federate extends AbstractFederate {
             log("Time Advanced to " + getFederateAmbassador().getFederateTime());
         }
 
-        resignFederation();
-
         log("Estimate time in queue: " + getEstimateTime());
+
+        resignFederation();
     }
 
     private double getEstimateTime() {

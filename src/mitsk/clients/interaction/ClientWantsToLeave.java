@@ -6,16 +6,16 @@ import hla.rti1516e.encoding.HLAinteger64BE;
 import mitsk.AbstractInteraction;
 import mitsk.clients.object.Client;
 
-public class NewClient extends AbstractInteraction {
+public class ClientWantsToLeave extends AbstractInteraction {
     private Client client;
 
-    private ParameterHandle newClientInteractionClassClientIdParameterHandle;
+    private InteractionClassHandle clientWantsToLeaveInteractionClassHandle;
+
+    private ParameterHandle clientWantsToLeaveInteractionClassClientIdParameterHandle;
 
     private EncoderFactory encoderFactory;
 
-    private InteractionClassHandle newClientInteractionClassHandle;
-
-    public NewClient(RTIambassador rtiAmbassador, Client client) throws Exception {
+    public ClientWantsToLeave(RTIambassador rtiAmbassador, Client client) throws Exception {
         super(rtiAmbassador);
 
         encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory();
@@ -32,18 +32,18 @@ public class NewClient extends AbstractInteraction {
         { // clientId
             HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
 
-            parameters.put(newClientInteractionClassClientIdParameterHandle, clientId.toByteArray());
+            parameters.put(clientWantsToLeaveInteractionClassClientIdParameterHandle, clientId.toByteArray());
         }
 
-        rtiAmbassador.sendInteraction(newClientInteractionClassHandle, parameters, generateTag());
+        rtiAmbassador.sendInteraction(clientWantsToLeaveInteractionClassHandle, parameters, generateTag());
     }
 
     @Override
     protected void setHandles() throws Exception {
         RTIambassador rtiAmbassador = getRtiAmbassador();
 
-        newClientInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.NewClient");
+        clientWantsToLeaveInteractionClassHandle = rtiAmbassador.getInteractionClassHandle("HLAinteractionRoot.ClientWantsToLeave");
 
-        newClientInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(newClientInteractionClassHandle, "clientId");
+        clientWantsToLeaveInteractionClassClientIdParameterHandle = rtiAmbassador.getParameterHandle(clientWantsToLeaveInteractionClassHandle, "clientId");
     }
 }

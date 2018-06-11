@@ -48,6 +48,22 @@
 				</parameter>
 			</interactionClass>
 			<interactionClass>
+				<name>ClientTakesTable</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>tableId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Table identification number</semantics>
+				</parameter>
+			</interactionClass>
+			<interactionClass>
 				<name>ClientTookTable</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
@@ -94,8 +110,30 @@
 					<semantics>Client identification number</semantics>
 				</parameter>
 			</interactionClass>
+            <interactionClass>
+                <name>LeaveFromQueue</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <parameter>
+                    <name>clientId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Client identification number</semantics>
+                </parameter>
+                <interactionClass>
+                    <name>ClientImpatience</name>
+                    <sharing>Publish</sharing>
+                    <transportation>HLAreliable</transportation>
+                    <order>TimeStamp</order>
+                    <parameter>
+                        <name>clientId</name>
+                        <dataType>HLAinteger64BE</dataType>
+                        <semantics>Client identification number</semantics>
+                    </parameter>
+                </interactionClass>
+            </interactionClass>
 			<interactionClass>
-				<name>LeaveFromQueue</name>
+				<name>ClientLeavesTable</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
@@ -104,17 +142,11 @@
 					<dataType>HLAinteger64BE</dataType>
 					<semantics>Client identification number</semantics>
 				</parameter>
-				<interactionClass>
-					<name>ClientImpatience</name>
-					<sharing>PublishSubscribe</sharing>
-					<transportation>HLAreliable</transportation>
-					<order>TimeStamp</order>
-					<parameter>
-						<name>clientId</name>
-						<dataType>HLAinteger64BE</dataType>
-						<semantics>Client identification number</semantics>
-					</parameter>
-				</interactionClass>
+				<parameter>
+					<name>tableId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Table identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>NewInRestaurant</name>
@@ -122,11 +154,48 @@
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
+            <interactionClass>
+                <name>StartingClientService</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <parameter>
+                    <name>clientId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Client identification number</semantics>
+                </parameter>
+                <parameter>
+                    <name>waiterId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Waiter identification number</semantics>
+                </parameter>
+            </interactionClass>
 			<interactionClass>
-				<name>StartingClientService</name>
+				<name>GiveMeal</name>
 				<sharing>PublishSubscribe</sharing>
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>mealId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Meal identification number</semantics>
+				</parameter>
+			</interactionClass>
+			<interactionClass>
+				<name>ClientWantsToLeave</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>PaymentService</name>
@@ -134,6 +203,27 @@
 				<transportation>HLAreliable</transportation>
 				<order>TimeStamp</order>
 			</interactionClass>
+            <interactionClass>
+                <name>ClientOrdersMeal</name>
+                <sharing>PublishSubscribe</sharing>
+                <transportation>HLAreliable</transportation>
+                <order>TimeStamp</order>
+                <parameter>
+                    <name>clientId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Client identification number</semantics>
+                </parameter>
+                <parameter>
+                    <name>mealId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Meal identification number</semantics>
+                </parameter>
+                <parameter>
+                    <name>waiterId</name>
+                    <dataType>HLAinteger64BE</dataType>
+                    <semantics>Waiter identification number</semantics>
+                </parameter>
+            </interactionClass>
 		</interactionClass>
 	</interactions>
 	<dimensions/>

@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='utf-8'?>
+<objectModel 
+ xmlns='http://standards.ieee.org/IEEE1516-2010'
+ xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+ xsi:schemaLocation='http://standards.ieee.org/IEEE1516-2010 http://standards.ieee.org/downloads/1516/1516.2-2010/IEEE1516-DIF-2010.xsd'  >
+	<modelIdentification>
+		<name>Gui</name>
+		<type>FOM</type>
+		<version>1.0</version>
+	</modelIdentification>
+	<objects>
+		<objectClass>
+			<name>HLAobjectRoot</name>
+			<objectClass>
+				<name>Client</name>
+				<sharing>PublishSubscribe</sharing>
+			</objectClass>
+		</objectClass>
+	</objects>
+	<interactions>
+		<interactionClass>
+			<name>HLAinteractionRoot</name>
+			<interactionClass>
+				<name>NewClient</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+			</interactionClass>
+			<interactionClass>
+				<name>NewInQueue</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+			</interactionClass>
+			<interactionClass>
+				<name>LeaveFromQueue</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<interactionClass>
+					<name>ClientImpatience</name>
+					<sharing>PublishSubscribe</sharing>
+					<transportation>HLAreliable</transportation>
+					<order>TimeStamp</order>
+				</interactionClass>
+			</interactionClass>
+			<interactionClass>
+				<name>ClientLeavesTable</name>
+				<sharing>PublishSubscribe</sharing>
+				<transportation>HLAreliable</transportation>
+				<order>TimeStamp</order>
+				<parameter>
+					<name>clientId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Client identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>tableId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Table identification number</semantics>
+				</parameter>
+			</interactionClass>
+		</interactionClass>
+	</interactions>
+	<dimensions/>
+	<synchronizations/>
+	<transportations/>
+	<updateRates/>
+	<dataTypes>
+		<basicDataRepresentations/>
+		<simpleDataTypes/>
+		<enumeratedDataTypes/>
+		<arrayDataTypes/>
+		<fixedRecordDataTypes/>
+		<variantRecordDataTypes/>
+	</dataTypes>
+	<notes/>
+</objectModel>

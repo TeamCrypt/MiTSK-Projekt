@@ -24,17 +24,26 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         if (interactionClass.equals(federate.getNewMealRequestInteractionClassHandle())) {
             try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+                Long clientIdentificationNumber;
+                Long mealIdentificationNumber;
 
-                clientId.decode(theParameters.get(federate.getNewMealRequestInteractionClassClientIdParameterHandle()));
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
+                    clientId.decode(theParameters.get(federate.getNewMealRequestInteractionClassClientIdParameterHandle()));
 
-                mealId.decode(theParameters.get(federate.getNewMealRequestInteractionClassMealIdParameterHandle()));
+                    clientIdentificationNumber = clientId.getValue();
+                }
 
-                federate.addMealRequest(clientId.getValue(), mealId.getValue());
+                { // mealId
+                    HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
 
-                log("Received request for meal with id " + mealId.getValue() + " for client with id " + clientId.getValue());
+                    mealId.decode(theParameters.get(federate.getNewMealRequestInteractionClassMealIdParameterHandle()));
+
+                    mealIdentificationNumber = mealId.getValue();
+                }
+
+                federate.addMealRequest(clientIdentificationNumber, mealIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -49,7 +58,7 @@ public class Ambassador extends AbstractFederateAmbassador {
                 mealId.decode(theParameters.get(federate.getTakeFoodInteractionClassMealIdParameterHandle()));
 
                 if (federate.removePreparedFood(clientId.getValue(), mealId.getValue())) {
-                    log("Food with id " + mealId.getValue() + " for client " + clientId.getValue() + " was taken");
+                    log("Food with id " + mealId.getValue() + " for Client " + clientId.getValue() + " was taken");
                 }
             } catch (Exception exception) {
                 exception.printStackTrace();
