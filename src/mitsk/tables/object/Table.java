@@ -6,24 +6,22 @@ import hla.rti1516e.RTIambassador;
 import mitsk.AbstractObject;
 
 public class Table extends AbstractObject {
-    private Long tableId;
+    private Long identificationNumber;
 
     private Client client = null;
 
-    private static Long nextTableId = 0L;
+    private static Long nextIdentificationNumber = 0L;
 
     private ObjectClassHandle tableObjectClassHandle;
 
     private AttributeHandle isFreeAttributeClassHandle;
-
-    private double freeAt;
 
     private boolean isNotified = false;
 
     public Table(RTIambassador rtiAmbassador) throws Exception {
         super(rtiAmbassador);
 
-        tableId = nextTableId++;
+        identificationNumber = nextIdentificationNumber++;
     }
 
     public void setFree() {
@@ -32,26 +30,20 @@ public class Table extends AbstractObject {
         isNotified = false;
     }
 
-    public void setOccupied(Client client, double freeAt) {
+    public void setOccupied(Client client) {
         this.client = client;
-
-        this.freeAt = freeAt;
     }
 
     public boolean isFree() {
         return client == null;
     }
 
-    public Long getTableId() {
-        return tableId;
+    public Long getIdentificationNumber() {
+        return identificationNumber;
     }
 
     public Client getClient() {
         return client;
-    }
-
-    public double getFreeAt() {
-        return freeAt;
     }
 
     @Override

@@ -24,72 +24,103 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         if (interactionClass.equals(federate.getClientCallsWaiterInteractionClassHandle())) {
             try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+                Long clientIdentificationNumber;
 
-                clientId.decode(theParameters.get(federate.getClientCallsWaiterInteractionClassClientIdParameterHandle()));
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                federate.addNewOrderRequest(clientId.getValue());
+                    clientId.decode(theParameters.get(federate.getClientCallsWaiterInteractionClassClientIdParameterHandle()));
 
-                log("Received request for waiter for client with id " + clientId.getValue());
+                    clientIdentificationNumber = clientId.getValue();
+                }
+
+                federate.addClientsCall(clientIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         } else if (interactionClass.equals(federate.getClientOrdersMealInteractionClassHandle())) {
             try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+                Long clientIdentificationNumber;
+                Long mealIdentificationNumber;
+                Long waiterIdentificationNumber;
 
-                clientId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassClientIdParameterHandle()));
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
+                    clientId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassClientIdParameterHandle()));
 
-                mealId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassMealIdParameterHandle()));
+                    clientIdentificationNumber = clientId.getValue();
+                }
 
-                federate.addMealToClientOrder(clientId.getValue(), mealId.getValue());
+                { // mealId
+                    HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
 
-                log("Client with id " + clientId.getValue() + " ordered a meal with id " + mealId.getValue());
+                    mealId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassMealIdParameterHandle()));
+
+                    mealIdentificationNumber = mealId.getValue();
+                }
+
+                { // waiterId
+                    HLAinteger64BE waiterId = encoderFactory.createHLAinteger64BE();
+
+                    waiterId.decode(theParameters.get(federate.getClientOrdersMealInteractionClassWaiterIdParameterHandle()));
+
+                    waiterIdentificationNumber = waiterId.getValue();
+                }
+
+                federate.orderMealForClient(clientIdentificationNumber, mealIdentificationNumber, waiterIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
         } else if (interactionClass.equals(federate.getPreparedMealRequestInteractionClassHandle())) {
             try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+                Long clientIdentificationNumber;
+                Long mealIdentificationNumber;
 
-                clientId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassClientIdParameterHandle()));
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
+                    clientId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassClientIdParameterHandle()));
 
-                mealId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassMealIdParameterHandle()));
+                    clientIdentificationNumber = clientId.getValue();
+                }
 
-                federate.addTakeMealRequest(clientId.getValue(), mealId.getValue());
+                { // mealId
+                    HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE();
 
-                log("Meal with id " + mealId.getValue() + " ordered by client with id " + clientId.getValue() + " has been already prepared and is waiting in the kitchen");
+                    mealId.decode(theParameters.get(federate.getPreparedMealRequestInteractionClassMealIdParameterHandle()));
+
+                    mealIdentificationNumber = mealId.getValue();
+                }
+
+                federate.takeMealRequest(clientIdentificationNumber, mealIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
-        } else if (interactionClass.equals(federate.getClientAsksForBillInteractionClassHandle())) {
-            try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
-
-                clientId.decode(theParameters.get(federate.getClientAsksForBillInteractionClassClientIdParameterHandle()));
-
-                federate.addGiveBillRequest(clientId.getValue());
-
-                log("Received request for bill for client with id " + clientId.getValue());
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        } else if (interactionClass.equals(federate.getEndingClientServiceInteractionClassHandle())) {
-            try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
-
-                clientId.decode(theParameters.get(federate.getEndingClientServiceInteractionClassClientIdParameterHandle()));
-
-                federate.endClientService(clientId.getValue());
-
-                log("Received payment for bill from client with id " + clientId.getValue());
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+//        } else if (interactionClass.equals(federate.getClientAsksForBillInteractionClassHandle())) {
+//            try {
+//                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+//
+//                clientId.decode(theParameters.get(federate.getClientAsksForBillInteractionClassClientIdParameterHandle()));
+//
+//                federate.addGiveBillRequest(clientId.getValue());
+//
+//                log("Received request for bill for client with id " + clientId.getValue());
+//            } catch (Exception exception) {
+//                exception.printStackTrace();
+//            }
+//        } else if (interactionClass.equals(federate.getEndingClientServiceInteractionClassHandle())) {
+//            try {
+//                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+//
+//                clientId.decode(theParameters.get(federate.getEndingClientServiceInteractionClassClientIdParameterHandle()));
+//
+//                federate.endClientService(clientId.getValue());
+//
+//                log("Received payment for bill from client with id " + clientId.getValue());
+//            } catch (Exception exception) {
+//                exception.printStackTrace();
+//            }
         }
     }
 }

@@ -38,6 +38,11 @@
 					<dataType>HLAinteger64BE</dataType>
 					<semantics>Client identification number</semantics>
 				</parameter>
+				<parameter>
+					<name>waiterId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Waiter identification number</semantics>
+				</parameter>
 			</interactionClass>
 			<interactionClass>
 				<name>NewMealRequest</name>
@@ -128,6 +133,11 @@
 					<name>mealId</name>
 					<dataType>HLAinteger64BE</dataType>
 					<semantics>Meal identification number</semantics>
+				</parameter>
+				<parameter>
+					<name>waiterId</name>
+					<dataType>HLAinteger64BE</dataType>
+					<semantics>Waiter identification number</semantics>
 				</parameter>
 			</interactionClass>
 			<interactionClass>

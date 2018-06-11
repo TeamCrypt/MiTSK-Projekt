@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Federate extends AbstractFederate {
-    private static final double A = 8.0;
+    private static final double A = 4.0;
 
-    private static final double B = 32.0;
+    private static final double B = 8.0;
 
     private InteractionClassHandle newMealRequestInteractionClassHandle;
 
@@ -47,7 +47,15 @@ public class Federate extends AbstractFederate {
         double federationTime = getFederateAmbassador().getFederateTime();
 
         try {
-            mealsRequests.add(new MealRequest(rtiAmbassador, new Meal(rtiAmbassador, mealId, new Client(rtiAmbassador, clientId)), federationTime + randomDouble(A, B)));
+            Client client = new Client(rtiAmbassador, clientId);
+
+            Meal meal = new Meal(rtiAmbassador, mealId, client);
+
+            MealRequest mealRequest = new MealRequest(rtiAmbassador, meal, federationTime + randomDouble(A, B));
+
+            mealsRequests.add(mealRequest);
+
+            log("Received request for " + meal.getName() + " for Client " + client.getIdentificationNumber() + " ready at " + mealRequest.getReadyAt());
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -103,7 +111,7 @@ public class Federate extends AbstractFederate {
     }
 
     private void informAboutPreparedMeals() {
-        List<MealRequest> preparedRequests = new ArrayList<>();
+        List<MealRequest> toRemove = new ArrayList<>();
 
         RTIambassador rtiAmbassador = getRTIAmbassador();
 
@@ -116,21 +124,21 @@ public class Federate extends AbstractFederate {
 
                     Client client = meal.getClient();
 
-                    PreparedMealRequest preparedMealRequest = new PreparedMealRequest(rtiAmbassador, client, meal);
+                    new PreparedMealRequest(rtiAmbassador, client, meal).sendInteraction();
 
-                    preparedMealRequest.sendInteraction();
-
-                    preparedRequests.add(mealRequest);
+                    toRemove.add(mealRequest);
 
                     preparedMeals.add(meal);
+
+                    log("Meal " + meal.getName() + " for Client " + client.getIdentificationNumber() + " is ready");
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }
         }
 
-        if (preparedRequests.size() > 0) {
-            mealsRequests.removeAll(preparedRequests);
+        if (toRemove.size() > 0) {
+            mealsRequests.removeAll(toRemove);
         }
     }
 

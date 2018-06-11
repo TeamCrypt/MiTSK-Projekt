@@ -2,12 +2,22 @@ package mitsk;
 
 import hla.rti1516e.RTIambassador;
 
+import java.util.Arrays;
+
 public abstract class AbstractMeal extends AbstractObject {
-    protected AbstractMeal(RTIambassador rtiAmbassador) throws Exception {
+    private Long identificationNumber;
+
+    protected AbstractMeal(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
         super(rtiAmbassador);
+
+        if (!Arrays.asList(getAllowedMealIds()).contains(identificationNumber)) {
+            throw new IllegalArgumentException("Unknown meal id " + identificationNumber);
+        }
+
+        this.identificationNumber = identificationNumber;
     }
 
-    public final String[] getAllowedMeals() {
+    public static String[] getAllowedMeals() {
         return new String[] {
             "soup",
             "fries",
@@ -17,7 +27,17 @@ public abstract class AbstractMeal extends AbstractObject {
         };
     }
 
-    public final Long[] getAllowedMealIds() {
+    public static double[] getAllowedMealsCosts() {
+        return new double[] {
+            10.0,
+            12.5,
+            5.5,
+            8.0,
+            11.0
+        };
+    }
+
+    public static Long[] getAllowedMealIds() {
         int length = getAllowedMeals().length;
 
         Long[] mealIds = new Long[length];
@@ -27,5 +47,17 @@ public abstract class AbstractMeal extends AbstractObject {
         }
 
         return mealIds;
+    }
+
+    public Long getIdentificationNumber() {
+        return identificationNumber;
+    }
+
+    public String getName() {
+        return getAllowedMeals()[Math.toIntExact(identificationNumber)];
+    }
+
+    public double getCost() {
+        return getAllowedMealsCosts()[Math.toIntExact(getIdentificationNumber())];
     }
 }

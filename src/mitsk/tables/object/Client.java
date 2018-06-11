@@ -6,6 +6,8 @@ import mitsk.AbstractObject;
 public class Client extends AbstractObject {
     private Long identificationNumber;
 
+    private boolean wantsToLeave = false;
+
     public Client(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
         super(rtiAmbassador);
 
@@ -21,8 +23,16 @@ public class Client extends AbstractObject {
         return identificationNumber;
     }
 
+    public boolean isWantsToLeave() {
+        return wantsToLeave;
+    }
+
     @Override
     protected void setHandles() throws Exception {
         // empty
+    }
+
+    public void wantsToLeave() {
+        wantsToLeave = true;
     }
 }

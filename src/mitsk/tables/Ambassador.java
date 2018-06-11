@@ -24,15 +24,35 @@ public class Ambassador extends AbstractFederateAmbassador {
 
         if (interactionClass.equals(federate.getLeaveFromQueueInteractionClassHandle())) {
             try {
-                HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+                Long clientIdentificationNumber;
 
-                clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
 
-                Long clientIdentificationNumber = clientId.getValue();
+                    clientId.decode(theParameters.get(federate.getLeaveFromQueueInteractionClassClientIdParameterHandle()));
 
-                federate.addClientReceived(clientIdentificationNumber);
+                    clientIdentificationNumber = clientId.getValue();
+                }
 
-                log("Client " + clientIdentificationNumber + " enters Restaurant");
+                federate.addClient(clientIdentificationNumber);
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        } else if (interactionClass.equals(federate.getClientWantsToLeaveInteractionClassHandle())) {
+            try {
+                Long clientIdentificationNumber;
+
+                { // clientId
+                    HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE();
+
+                    clientId.decode(theParameters.get(federate.getClientWantsToLeaveInteractionClassClientIdParameterHandle()));
+
+                    clientIdentificationNumber = clientId.getValue();
+                }
+
+                log("wants to leave " + clientIdentificationNumber);
+
+                federate.nextClientToLeave(clientIdentificationNumber);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }

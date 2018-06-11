@@ -6,6 +6,7 @@ import hla.rti1516e.encoding.HLAinteger64BE;
 import mitsk.AbstractInteraction;
 import mitsk.waiters.object.Client;
 import mitsk.waiters.object.Meal;
+import mitsk.waiters.object.Waiter;
 
 public class GiveMeal extends AbstractInteraction {
     private Client client;
@@ -20,7 +21,9 @@ public class GiveMeal extends AbstractInteraction {
 
     private EncoderFactory encoderFactory;
 
-    public GiveMeal(RTIambassador rtiAmbassador, Client client, Meal meal) throws Exception {
+    private Waiter waiter;
+
+    public GiveMeal(RTIambassador rtiAmbassador, Client client, Meal meal, Waiter waiter) throws Exception {
         super(rtiAmbassador);
 
         encoderFactory = RtiFactoryFactory.getRtiFactory().getEncoderFactory();
@@ -28,6 +31,20 @@ public class GiveMeal extends AbstractInteraction {
         this.client = client;
 
         this.meal = meal;
+
+        this.waiter = waiter;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public Meal getMeal() {
+        return meal;
+    }
+
+    public Waiter getWaiter() {
+        return waiter;
     }
 
     @Override
@@ -36,15 +53,21 @@ public class GiveMeal extends AbstractInteraction {
 
         ParameterHandleValueMap parameters = rtiAmbassador.getParameterHandleValueMapFactory().create(2);
 
-        HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
+        { // clientId
+            HLAinteger64BE clientId = encoderFactory.createHLAinteger64BE(client.getIdentificationNumber());
 
-        parameters.put(giveMealClassClientIdParameterHandle, clientId.toByteArray());
+            parameters.put(giveMealClassClientIdParameterHandle, clientId.toByteArray());
+        }
 
-        HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE(meal.getIdentificationNumber());
+        { // mealId
+            HLAinteger64BE mealId = encoderFactory.createHLAinteger64BE(meal.getIdentificationNumber());
 
-        parameters.put(giveMealClassMealIdParameterHandle, mealId.toByteArray());
+            parameters.put(giveMealClassMealIdParameterHandle, mealId.toByteArray());
+        }
 
         rtiAmbassador.sendInteraction(giveMealInteractionClassHandle, parameters, generateTag());
+
+        waiter.setFree();
     }
 
     @Override

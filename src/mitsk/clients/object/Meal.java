@@ -1,4 +1,4 @@
-package mitsk.waiters.object;
+package mitsk.clients.object;
 
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractMeal;

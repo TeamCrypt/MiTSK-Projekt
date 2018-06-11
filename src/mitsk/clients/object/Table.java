@@ -8,6 +8,8 @@ public class Table extends AbstractObject {
 
     public Table(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
         super(rtiAmbassador);
+
+        this.identificationNumber = identificationNumber;
     }
 
     @Override

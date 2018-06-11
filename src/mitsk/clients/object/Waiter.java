@@ -1,4 +1,4 @@
-package mitsk.waiters.object;
+package mitsk.clients.object;
 
 import hla.rti1516e.RTIambassador;
 import mitsk.AbstractObject;
@@ -6,14 +6,10 @@ import mitsk.AbstractObject;
 public class Waiter extends AbstractObject {
     private Long identificationNumber;
 
-    private static Long nextWaiterId = 0L;
-
-    private Client serves = null;
-
-    public Waiter(RTIambassador rtiAmbassador) throws Exception {
+    public Waiter(RTIambassador rtiAmbassador, Long identificationNumber) throws Exception {
         super(rtiAmbassador);
 
-        identificationNumber = nextWaiterId++;
+        this.identificationNumber = identificationNumber;
     }
 
     @Override
@@ -23,18 +19,6 @@ public class Waiter extends AbstractObject {
 
     public Long getIdentificationNumber() {
         return identificationNumber;
-    }
-
-    public boolean isFree() {
-        return serves == null;
-    }
-
-    public void setBusy(Client client) {
-        serves = client;
-    }
-
-    public void setFree() {
-        serves = null;
     }
 
     @Override

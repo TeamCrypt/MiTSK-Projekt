@@ -43,7 +43,7 @@ public class ClientTakesTable extends AbstractInteraction {
         }
 
         { // tableId
-            HLAinteger64BE tableId = encoderFactory.createHLAinteger64BE(table.getTableId());
+            HLAinteger64BE tableId = encoderFactory.createHLAinteger64BE(table.getIdentificationNumber());
 
             parameters.put(clientTakesTableInteractionClassTableIdParameterHandle, tableId.toByteArray());
         }
